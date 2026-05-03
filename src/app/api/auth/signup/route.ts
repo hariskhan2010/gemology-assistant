@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession as createJWT } from "@/lib/auth/session";
-import { createUser, findUserByEmail } from "@/lib/file-store/users";
-import { createSession as createSessionRecord } from "@/lib/file-store/sessions";
+import { createUser, findUserByEmail } from "@/lib/db";
+import { createSession } from "@/lib/db";
 import { randomUUID } from "crypto";
 
 export async function POST(request: Request) {
@@ -17,20 +17,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
     }
 
-    const existing = findUserByEmail(email);
+    const existing = await findUserByEmail(email);
     if (existing) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 });
     }
 
-    const passwordHash = await hashPassword(password);
+    const password_hash = await hashPassword(password);
     const userId = randomUUID();
 
-    createUser({
+    await createUser({
       id: userId,
       email,
-      passwordHash,
+      password_hash,
       name,
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     });
 
     const token = await createJWT({
@@ -39,12 +39,12 @@ export async function POST(request: Request) {
       name,
     });
 
-    createSessionRecord({
+    await createSession({
       token,
-      userId,
+      user_id: userId,
       email,
       name,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
     const response = NextResponse.json({ user: { id: userId, name, email } });

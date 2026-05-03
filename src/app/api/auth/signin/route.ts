@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSession as createJWT } from "@/lib/auth/session";
-import { findUserByEmail } from "@/lib/file-store/users";
-import { createSession as createSessionRecord } from "@/lib/file-store/sessions";
+import { findUserByEmail } from "@/lib/db";
+import { createSession } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
@@ -12,12 +12,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
 
-    const user = findUserByEmail(email);
+    const user = await findUserByEmail(email);
     if (!user) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
-    const isValid = await verifyPassword(password, user.passwordHash);
+    const isValid = await verifyPassword(password, user.password_hash);
     if (!isValid) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
@@ -28,12 +28,12 @@ export async function POST(request: Request) {
       name: user.name,
     });
 
-    createSessionRecord({
+    await createSession({
       token,
-      userId: user.id,
+      user_id: user.id,
       email: user.email,
       name: user.name,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
     const response = NextResponse.json({ user: { id: user.id, name: user.name, email: user.email } });

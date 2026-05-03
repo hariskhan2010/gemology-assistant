@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { invalidateSession } from "@/lib/file-store/sessions";
+import { deleteSession } from "@/lib/db";
 
 export async function POST() {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("session");
 
   if (sessionCookie?.value) {
-    invalidateSession(sessionCookie.value);
+    deleteSession(sessionCookie.value);
   }
 
   const response = NextResponse.json({ success: true });
