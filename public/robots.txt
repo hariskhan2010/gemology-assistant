@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /assistant/
+Disallow: /auth/
+
+Sitemap: https://gemsage.ai/sitemap.xml
