@@ -148,7 +148,7 @@ export async function POST(request: Request) {
       });
     }
 
-    console.log("Using model: gemini-1.5-flash");
+    console.log("Using model: gemini-2.5-flash");
     console.log("System prompt length:", fullPrompt.length);
     console.log("Contents count:", contents.length);
 
