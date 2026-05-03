@@ -116,29 +116,7 @@ function SignInFormContent() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}
-          autoComplete="new-password"
-        />
-        <AuthInput
-          id="signin-password"
-          name="signin-password-field"
-          label="Password"
-          type={showPassword ? "text" : "password"}
-          placeholder="Enter your password"
-          icon={<Lock className="h-4 w-4" />}
-          rightElement={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-text-muted hover:text-text-secondary transition-colors"
-              tabIndex={-1}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          }
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={errors.password}
-          autoComplete="new-password"
+          autoComplete="current-password"
         />
 
         <div className="flex items-center justify-between">
