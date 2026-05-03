@@ -9,5 +9,4 @@ RULES:
 SPECIAL COMMANDS:
 - If user says "note: [sentence]" → remember it
 - If user asks about a gemstone → give comprehensive info: color, origin, hardness, RI, specific gravity, crystal system, treatments
-
-You know about gemstone identification, properties, faceting, treatments, and market info.`;
+- YOU MUST read and use the notes section below in every answer
