@@ -4,7 +4,7 @@ import { verifySession } from "@/lib/auth/session";
 
 const PROTECTED_ROUTES = ["/assistant"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 

@@ -1,16 +1,49 @@
 import { NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth/session";
 import { cookies } from "next/headers";
-import {
-  listConversations,
-  getMessages,
-  createConversation,
-  getConversationMeta,
-  updateConversationTitle,
-} from "@/lib/file-store/conversations";
+import { neon } from "@neondatabase/serverless";
 import { randomUUID } from "crypto";
-import fs from "fs";
-import { getConversationPath } from "@/lib/file-store/ensure";
+
+const sql = neon(process.env.DATABASE_URL!);
+
+export interface DbConversation {
+  id: string;
+  user_id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbMessage {
+  id: string;
+  conversation_id: string;
+  role: string;
+  content: string;
+  image?: string;
+  timestamp: string;
+}
+
+async function ensureTable() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS conversations (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )
+  `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS messages (
+      id TEXT PRIMARY KEY,
+      conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+      role TEXT NOT NULL,
+      content TEXT NOT NULL,
+      image TEXT,
+      timestamp TEXT NOT NULL
+    )
+  `;
+}
 
 export async function GET() {
   try {
@@ -25,76 +58,39 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const conversations = listConversations(session.userId);
+    await ensureTable();
+    const conversations = await sql`
+      SELECT * FROM conversations 
+      WHERE user_id = ${session.userId} 
+      ORDER BY updated_at DESC
+    ` as DbConversation[];
 
-    const conversationsWithMessages = conversations.map((conv) => {
-      const messages = getMessages(conv.id);
-      return {
-        id: conv.id,
-        title: conv.title,
-        createdAt: conv.createdAt,
-        updatedAt: conv.updatedAt,
-        messages,
-      };
-    });
+    const conversationsWithMessages = await Promise.all(
+      conversations.map(async (conv) => {
+        const messages = await sql`
+          SELECT * FROM messages 
+          WHERE conversation_id = ${conv.id} 
+          ORDER BY timestamp ASC
+        ` as DbMessage[];
+        return {
+          id: conv.id,
+          title: conv.title,
+          createdAt: conv.created_at,
+          updatedAt: conv.updated_at,
+          messages: messages.map((m) => ({
+            role: m.role,
+            content: m.content,
+            image: m.image,
+            timestamp: m.timestamp,
+          })),
+        };
+      })
+    );
 
     return NextResponse.json({ conversations: conversationsWithMessages });
   } catch (error) {
     console.error("Get conversations error:", error);
     return NextResponse.json({ error: "Failed to load conversations" }, { status: 500 });
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("session");
-    if (!sessionCookie?.value) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const session = await verifySession(sessionCookie.value);
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { title, messages } = await request.json();
-    const id = randomUUID();
-    const now = new Date().toISOString();
-
-    createConversation({
-      id,
-      userId: session.userId,
-      title: title || "New Chat",
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    if (messages && Array.isArray(messages)) {
-      for (const msg of messages) {
-        const msgPath = getConversationPath(id);
-        const line = JSON.stringify({
-          role: msg.role,
-          content: msg.content,
-          image: msg.image || undefined,
-          timestamp: now,
-        });
-        fs.appendFileSync(msgPath, line + "\n");
-      }
-    }
-
-    return NextResponse.json({
-      conversation: {
-        id,
-        title: title || "New Chat",
-        createdAt: now,
-        updatedAt: now,
-        messages: messages || [],
-      },
-    });
-  } catch (error) {
-    console.error("Create conversation error:", error);
-    return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
   }
 }
 
@@ -116,12 +112,21 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "id and title are required" }, { status: 400 });
     }
 
-    const meta = getConversationMeta(id);
-    if (!meta || meta.userId !== session.userId) {
+    const convs = await sql`
+      SELECT * FROM conversations 
+      WHERE id = ${id} AND user_id = ${session.userId}
+      LIMIT 1
+    ` as DbConversation[];
+    
+    if (!convs.length) {
       return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
     }
 
-    updateConversationTitle(id, title);
+    await sql`
+      UPDATE conversations 
+      SET title = ${title}, updated_at = ${new Date().toISOString()}
+      WHERE id = ${id}
+    `;
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -133,7 +138,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-
+    
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("session");
     if (!sessionCookie?.value) {
@@ -145,23 +150,70 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const meta = getConversationMeta(id);
-    if (!meta || meta.userId !== session.userId) {
+    const convs = await sql`
+      SELECT * FROM conversations 
+      WHERE id = ${id} AND user_id = ${session.userId}
+      LIMIT 1
+    ` as DbConversation[];
+    
+    if (!convs.length) {
       return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
     }
 
-    const msgPath = getConversationPath(id);
-    if (fs.existsSync(msgPath)) {
-      fs.unlinkSync(msgPath);
-    }
-    const metaPath = getConversationPath(`${id}.meta`);
-    if (fs.existsSync(metaPath)) {
-      fs.unlinkSync(metaPath);
-    }
+    await sql`DELETE FROM messages WHERE conversation_id = ${id}`;
+    await sql`DELETE FROM conversations WHERE id = ${id}`;
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Delete conversation error:", error);
     return NextResponse.json({ error: "Failed to delete conversation" }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const session = await verifySession(sessionCookie.value);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { title, messages } = await request.json();
+    const id = randomUUID();
+    const now = new Date().toISOString();
+
+    await ensureTable();
+    await sql`
+      INSERT INTO conversations (id, user_id, title, created_at, updated_at)
+      VALUES (${id}, ${session.userId}, ${title || "New Chat"}, ${now}, ${now})
+    `;
+
+    if (messages && Array.isArray(messages)) {
+      for (const msg of messages) {
+        const msgId = randomUUID();
+        await sql`
+          INSERT INTO messages (id, conversation_id, role, content, image, timestamp)
+          VALUES (${msgId}, ${id}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${msg.timestamp || now})
+        `;
+      }
+    }
+
+    return NextResponse.json({
+      conversation: {
+        id,
+        title: title || "New Chat",
+        createdAt: now,
+        updatedAt: now,
+        messages: messages || [],
+      },
+    });
+  } catch (error) {
+    console.error("Create conversation error:", error);
+    return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
   }
 }
