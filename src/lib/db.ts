@@ -1,6 +1,13 @@
 import { neon } from "@neondatabase/serverless";
 
-const sql = neon(process.env.DATABASE_URL!);
+let sql: ReturnType<typeof neon> | null = null;
+
+function getSql() {
+  if (!sql) {
+    sql = neon(process.env.DATABASE_URL!);
+  }
+  return sql;
+}
 
 export interface DbUser {
   id: string;
@@ -19,6 +26,7 @@ export interface DbSession {
 }
 
 export async function initDb() {
+  const sql = getSql();
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -40,11 +48,13 @@ export async function initDb() {
 }
 
 export async function findUserByEmail(email: string): Promise<DbUser | null> {
+  const sql = getSql();
   const rows = await sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`;
   return rows[0] as DbUser | null;
 }
 
 export async function createUser(user: DbUser) {
+  const sql = getSql();
   await sql`
     INSERT INTO users (id, email, password_hash, name, created_at)
     VALUES (${user.id}, ${user.email}, ${user.password_hash}, ${user.name}, ${user.created_at})
@@ -52,6 +62,7 @@ export async function createUser(user: DbUser) {
 }
 
 export async function createSession(session: DbSession) {
+  const sql = getSql();
   await sql`
     INSERT INTO sessions (token, user_id, email, name, expires_at)
     VALUES (${session.token}, ${session.user_id}, ${session.email}, ${session.name}, ${session.expires_at})
@@ -59,10 +70,12 @@ export async function createSession(session: DbSession) {
 }
 
 export async function findSessionByToken(token: string): Promise<DbSession | null> {
+  const sql = getSql();
   const rows = await sql`SELECT * FROM sessions WHERE token = ${token} LIMIT 1`;
   return rows[0] as DbSession | null;
 }
 
 export async function deleteSession(token: string) {
+  const sql = getSql();
   await sql`DELETE FROM sessions WHERE token = ${token}`;
 }
