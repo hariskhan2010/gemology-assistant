@@ -1,25 +1,67 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SYSTEM_PROMPT } from "@/lib/knowledge/system-prompt";
-import { detectNote } from "@/lib/file-store/detect-note";
-import { addNote, getNotes } from "@/lib/file-store/notes";
-import { appendMessage, getRecentMessages } from "@/lib/file-store/conversations";
-import { autoCompact } from "@/lib/file-store/compact";
+import { neon } from "@neondatabase/serverless";
+import { randomUUID } from "crypto";
 
+const sql = neon(process.env.DATABASE_URL!);
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-function buildSystemPrompt(): string {
-  const notes = getNotes();
-  let prompt = SYSTEM_PROMPT;
+// Ensure notes table exists
+async function ensureNotesTable() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS notes (
+      id TEXT PRIMARY KEY,
+      content TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )
+  `;
+}
 
-  if (notes.length > 0) {
-    prompt += "\n\nUSER NOTES (remember these about the user):\n";
-    for (const note of notes) {
-      prompt += `- ${note}\n`;
-    }
+async function getNotes(): Promise<string[]> {
+  await ensureNotesTable();
+  const rows = await sql`SELECT content FROM notes ORDER BY created_at ASC` as { content: string }[];
+  return rows.map(r => r.content);
+}
+
+async function addNote(content: string) {
+  await ensureNotesTable();
+  const id = randomUUID();
+  await sql`
+    INSERT INTO notes (id, content, created_at)
+    VALUES (${id}, ${content}, ${new Date().toISOString()})
+  `;
+}
+
+function detectNote(content: string): string | null {
+  const lower = content.toLowerCase();
+  if (lower.includes("remember:") || lower.includes("note:")) {
+    const match = content.match(/(remember:|note:)\s*(.+)/i);
+    if (match) return match[2].trim();
   }
+  return null;
+}
 
-  return prompt;
+async function getRecentMessages(conversationId: string, limit: number) {
+  const rows = await sql`
+    SELECT role, content FROM messages 
+    WHERE conversation_id = ${conversationId} 
+    ORDER BY timestamp DESC 
+    LIMIT ${limit}
+  ` as { role: string; content: string }[];
+  return rows.reverse();
+}
+
+async function appendMessage(conversationId: string, msg: { role: string; content: string; image?: string }) {
+  const id = randomUUID();
+  await sql`
+    INSERT INTO messages (id, conversation_id, role, content, image, timestamp)
+    VALUES (${id}, ${conversationId}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${new Date().toISOString()})
+  `;
+}
+
+function buildSystemPrompt(): string {
+  return SYSTEM_PROMPT;
 }
 
 export async function POST(request: Request) {
@@ -33,37 +75,41 @@ export async function POST(request: Request) {
       );
     }
 
-    autoCompact();
-
+    // Detect and store notes
     const lastUserMessage = messages.filter((m: { role: string }) => m.role === "user").pop();
     if (lastUserMessage?.content) {
       const noteContent = detectNote(lastUserMessage.content);
       if (noteContent) {
-        addNote(noteContent);
+        await addNote(noteContent);
       }
     }
 
-    if (conversationId) {
-      const lastMsg = messages[messages.length - 1];
-      if (lastMsg) {
-        appendMessage(conversationId, {
-          role: lastMsg.role,
-          content: lastMsg.content,
-          image: lastMsg.image,
-          timestamp: new Date().toISOString(),
-        });
-      }
+    // Save user message to DB
+    if (conversationId && lastUserMessage) {
+      await appendMessage(conversationId, {
+        role: lastUserMessage.role,
+        content: lastUserMessage.content,
+        image: lastUserMessage.image,
+      });
     }
 
     const systemPrompt = buildSystemPrompt();
+    const notes = await getNotes();
+    let fullPrompt = systemPrompt;
+    if (notes.length > 0) {
+      fullPrompt += "\n\nUSER NOTES (remember these about the user):\n";
+      for (const note of notes) {
+        fullPrompt += `- ${note}\n`;
+      }
+    }
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction: systemPrompt,
+      model: "gemini-1.5-flash",
+      systemInstruction: fullPrompt,
     });
 
     const conversationHistory = conversationId
-      ? getRecentMessages(conversationId, 200)
+      ? await getRecentMessages(conversationId, 200)
       : [];
 
     const historyParts = conversationHistory.map((m) => ({
@@ -87,7 +133,7 @@ export async function POST(request: Request) {
     const result = await model.generateContentStream({
       contents: [
         ...historyParts,
-        { role: "user", parts: Array.isArray(currentParts) ? currentParts : [currentParts] },
+        { role: "user", parts: currentParts },
       ],
     } as any);
 
