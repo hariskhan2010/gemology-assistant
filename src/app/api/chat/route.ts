@@ -5,9 +5,9 @@ import { neon } from "@neondatabase/serverless";
 import { randomUUID } from "crypto";
 
 const sql = neon(process.env.DATABASE_URL!);
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-// Ensure notes table exists
 async function ensureNotesTable() {
   await sql`
     CREATE TABLE IF NOT EXISTS notes (
@@ -19,18 +19,26 @@ async function ensureNotesTable() {
 }
 
 async function getNotes(): Promise<string[]> {
-  await ensureNotesTable();
-  const rows = await sql`SELECT content FROM notes ORDER BY created_at ASC` as { content: string }[];
-  return rows.map(r => r.content);
+  try {
+    await ensureNotesTable();
+    const rows = await sql`SELECT content FROM notes ORDER BY created_at ASC` as { content: string }[];
+    return rows.map(r => r.content);
+  } catch {
+    return [];
+  }
 }
 
 async function addNote(content: string) {
-  await ensureNotesTable();
-  const id = randomUUID();
-  await sql`
-    INSERT INTO notes (id, content, created_at)
-    VALUES (${id}, ${content}, ${new Date().toISOString()})
-  `;
+  try {
+    await ensureNotesTable();
+    const id = randomUUID();
+    await sql`
+      INSERT INTO notes (id, content, created_at)
+      VALUES (${id}, ${content}, ${new Date().toISOString()})
+    `;
+  } catch (e) {
+    console.error("Failed to add note:", e);
+  }
 }
 
 function detectNote(content: string): string | null {
@@ -43,33 +51,29 @@ function detectNote(content: string): string | null {
 }
 
 async function getRecentMessages(conversationId: string, limit: number) {
-  const rows = await sql`
-    SELECT role, content FROM messages 
-    WHERE conversation_id = ${conversationId} 
-    ORDER BY timestamp DESC 
-    LIMIT ${limit}
-  ` as { role: string; content: string }[];
-  return rows.reverse();
+  try {
+    const rows = await sql`
+      SELECT role, content FROM messages 
+      WHERE conversation_id = ${conversationId} 
+      ORDER BY timestamp DESC 
+      LIMIT ${limit}
+    ` as { role: string; content: string }[];
+    return rows.reverse();
+  } catch {
+    return [];
+  }
 }
 
 async function appendMessage(conversationId: string, msg: { role: string; content: string; image?: string }) {
-  const id = randomUUID();
-  await sql`
-    INSERT INTO messages (id, conversation_id, role, content, image, timestamp)
-    VALUES (${id}, ${conversationId}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${new Date().toISOString()})
-  `;
-}
-
-async function buildSystemPrompt(): Promise<string> {
-  const notes = await getNotes();
-  let prompt = SYSTEM_PROMPT;
-  if (notes.length > 0) {
-    prompt += "\n\nUSER NOTES you must remember:\n";
-    for (const note of notes) {
-      prompt += `- ${note}\n`;
-    }
+  try {
+    const id = randomUUID();
+    await sql`
+      INSERT INTO messages (id, conversation_id, role, content, image, timestamp)
+      VALUES (${id}, ${conversationId}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${new Date().toISOString()})
+    `;
+  } catch (e) {
+    console.error("Failed to append message:", e);
   }
-  return prompt;
 }
 
 export async function POST(request: Request) {
@@ -78,7 +82,7 @@ export async function POST(request: Request) {
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
-        { error: "API key not configured. Add GEMINI_API_KEY to your environment." },
+        { error: "API key not configured." },
         { status: 500 }
       );
     }
@@ -101,65 +105,77 @@ export async function POST(request: Request) {
       });
     }
 
-    const systemPrompt = await buildSystemPrompt();
+    // Build system prompt with notes
+    const notes = await getNotes();
+    let fullPrompt = SYSTEM_PROMPT;
+    if (notes.length > 0) {
+      fullPrompt += "\n\nUSER NOTES you must remember:\n";
+      for (const note of notes) {
+        fullPrompt += `- ${note}\n`;
+      }
+    }
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction: systemPrompt,
-    });
+    // Get history
+    const history = conversationId ? await getRecentMessages(conversationId, 20) : [];
 
-    const conversationHistory = conversationId
-      ? await getRecentMessages(conversationId, 200)
-      : [];
+    // Build contents array
+    const contents: any[] = [];
+    
+    // Add history
+    for (const msg of history) {
+      contents.push({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      });
+    }
 
-    const historyParts = conversationHistory.map((m) => ({
-      role: m.role === "user" ? "user" : "model",
-      parts: [{ text: m.content }],
-    }));
-
+    // Add current message
     const currentMsg = messages[messages.length - 1];
-    let currentParts: { text?: string; inlineData?: { mimeType: string; data: string } }[];
     if (currentMsg?.image) {
       const base64Data = currentMsg.image.split(",")[1] || currentMsg.image;
       const mimeType = currentMsg.image.includes("data:image/png") ? "image/png" : "image/jpeg";
-      currentParts = [
-        { inlineData: { mimeType, data: base64Data } },
-        { text: currentMsg.content },
-      ];
+      contents.push({
+        role: "user",
+        parts: [
+          { inlineData: { mimeType, data: base64Data } },
+          { text: currentMsg.content || "" },
+        ],
+      });
     } else {
-      currentParts = [{ text: currentMsg?.content || "" }];
+      contents.push({
+        role: "user",
+        parts: [{ text: currentMsg?.content || "" }],
+      });
     }
 
-    const result = await model.generateContentStream({
-      contents: [
-        ...historyParts,
-        { role: "user", parts: currentParts },
-      ],
-    } as any);
+    console.log("Using model: gemini-1.5-flash");
+    console.log("System prompt length:", fullPrompt.length);
+    console.log("Contents count:", contents.length);
 
-    const encoder = new TextEncoder();
-    const readable = new ReadableStream({
-      async start(controller) {
-        for await (const chunk of result.stream) {
-          const text = chunk.text();
-          if (text) {
-            controller.enqueue(encoder.encode(text));
-          }
-        }
-        controller.close();
-      },
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: fullPrompt,
     });
 
-    return new Response(readable, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
-      },
+    const result = await model.generateContent({
+      contents,
     });
-  } catch (error) {
+
+    const responseText = result.response.text();
+    
+    // Save assistant response to DB
+    if (conversationId) {
+      await appendMessage(conversationId, {
+        role: "model",
+        content: responseText,
+      });
+    }
+
+    return NextResponse.json({ response: responseText });
+  } catch (error: any) {
     console.error("Chat API error:", error);
     return NextResponse.json(
-      { error: "Failed to process request" },
+      { error: error?.message || "Failed to process request" },
       { status: 500 }
     );
   }
