@@ -49,8 +49,8 @@ export async function initDb() {
 
 export async function findUserByEmail(email: string): Promise<DbUser | null> {
   const sql = getSql();
-  const rows = await sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`;
-  return rows[0] as DbUser | null;
+  const rows = await sql`SELECT * FROM users WHERE email = ${email} LIMIT 1` as unknown as DbUser[];
+  return rows[0] || null;
 }
 
 export async function createUser(user: DbUser) {
@@ -71,8 +71,8 @@ export async function createSession(session: DbSession) {
 
 export async function findSessionByToken(token: string): Promise<DbSession | null> {
   const sql = getSql();
-  const rows = await sql`SELECT * FROM sessions WHERE token = ${token} LIMIT 1`;
-  return rows[0] as DbSession | null;
+  const rows = await sql`SELECT * FROM sessions WHERE token = ${token} LIMIT 1` as unknown as DbSession[];
+  return rows[0] || null;
 }
 
 export async function deleteSession(token: string) {
