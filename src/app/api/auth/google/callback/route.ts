@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const state = searchParams.get("state");
 
   if (!code) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/auth/signin?error=missing_code`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"}/auth/signin?error=missing_code`);
   }
 
   try {
@@ -21,13 +21,13 @@ export async function GET(request: Request) {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID || "",
         client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
-        redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/auth/google/callback`,
+        redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"}/api/auth/google/callback`,
         grant_type: "authorization_code",
       }),
     });
 
     if (!tokenRes.ok) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/auth/signin?error=token_exchange_failed`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"}/auth/signin?error=token_exchange_failed`);
     }
 
     const { access_token } = await tokenRes.json();
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     });
 
     if (!userRes.ok) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/auth/signin?error=userinfo_failed`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"}/auth/signin?error=userinfo_failed`);
     }
 
     const user = await userRes.json();
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
       }
     }
 
-    const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${redirect}`);
+    const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"}${redirect}`);
     response.cookies.set({
       name: "session",
       value: token,
@@ -77,6 +77,6 @@ export async function GET(request: Request) {
 
     return response;
   } catch {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/auth/signin?error=oauth_failed`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"}/auth/signin?error=oauth_failed`);
   }
 }
