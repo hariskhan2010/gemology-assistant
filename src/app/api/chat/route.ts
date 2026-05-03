@@ -60,8 +60,16 @@ async function appendMessage(conversationId: string, msg: { role: string; conten
   `;
 }
 
-function buildSystemPrompt(): string {
-  return SYSTEM_PROMPT;
+async function buildSystemPrompt(): Promise<string> {
+  const notes = await getNotes();
+  let prompt = SYSTEM_PROMPT;
+  if (notes.length > 0) {
+    prompt += "\n\nUSER NOTES you must remember:\n";
+    for (const note of notes) {
+      prompt += `- ${note}\n`;
+    }
+  }
+  return prompt;
 }
 
 export async function POST(request: Request) {
@@ -93,15 +101,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const systemPrompt = buildSystemPrompt();
-    const notes = await getNotes();
-    let fullPrompt = systemPrompt;
-    if (notes.length > 0) {
-      fullPrompt += "\n\nUSER NOTES (remember these about the user):\n";
-      for (const note of notes) {
-        fullPrompt += `- ${note}\n`;
-      }
-    }
+    const systemPrompt = await buildSystemPrompt();
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
