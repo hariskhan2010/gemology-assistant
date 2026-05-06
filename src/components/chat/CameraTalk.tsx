@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Camera, Mic, MicOff, Volume2, VolumeX, X, Loader2 } from "lucide-react";
+import { Camera, Mic, MicOff, Volume2, VolumeX, X, Loader2, MessageSquare } from "lucide-react";
 import { useChat } from "@/lib/chat-context";
 
 interface CameraTalkProps {
@@ -16,6 +16,7 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recognitionRef = useRef<any>(null);
+  const silenceTimerRef = useRef<number | null>(null);
 
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -26,18 +27,17 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
   const [lastResponse, setLastResponse] = useState("");
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const [isAutoMode, setIsAutoMode] = useState(true);
+  
   const prevMessageCountRef = useRef(0);
   const finalTranscriptRef = useRef("");
+  const isProcessingRef = useRef(false);
 
-  // Initialize speech recognition
   const initSpeechRecognition = useCallback(() => {
     if (typeof window === "undefined") return null;
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.warn("Speech recognition not supported");
-      return null;
-    }
+    if (!SpeechRecognition) return null;
 
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
@@ -49,116 +49,108 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
       let interim = "";
 
       for (let i = 0; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          final += transcript;
-        } else {
-          interim += transcript;
-        }
+        const text = event.results[i][0].transcript;
+        if (event.results[i].isFinal) final += text;
+        else interim += text;
       }
 
-      finalTranscriptRef.current = final || finalTranscriptRef.current;
+      if (final) finalTranscriptRef.current += final + " ";
       setTranscript(final || interim);
+
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+      
+      if (!isProcessingRef.current) {
+        silenceTimerRef.current = window.setTimeout(() => {
+          if (finalTranscriptRef.current.trim() && isAutoMode && !isProcessingRef.current) {
+            handleProcessInput();
+          }
+        }, 1500);
+      }
     };
 
     recognition.onend = () => {
       setIsListening(false);
+      if (isAutoMode && !isProcessingRef.current && isOpen) {
+        setTimeout(() => {
+          if (!isProcessingRef.current && isOpen) startListening();
+        }, 500);
+      }
     };
 
-    recognition.onerror = () => {
-      setIsListening(false);
-    };
-
+    recognition.onerror = () => setIsListening(false);
     return recognition;
-  }, []);
+  }, [isAutoMode, isOpen]);
 
-  // Start camera
   const startCamera = useCallback(async () => {
     try {
       setCameraError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false,
       });
       streamRef.current = stream;
       setCameraStream(stream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      if (videoRef.current) videoRef.current.srcObject = stream;
     } catch {
       setCameraError("Unable to access camera. Please grant permission.");
     }
   }, [facingMode]);
 
-  // Stop camera
   const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current?.getTracks().forEach(track => track.stop());
     streamRef.current = null;
     setCameraStream(null);
   }, []);
 
-  // Toggle camera
   const toggleCamera = useCallback(() => {
     stopCamera();
-    setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
+    setFacingMode(prev => prev === "user" ? "environment" : "user");
   }, [stopCamera]);
 
-  // Start listening
   const startListening = useCallback(() => {
-    if (!recognitionRef.current) {
-      recognitionRef.current = initSpeechRecognition();
-    }
+    if (!recognitionRef.current) recognitionRef.current = initSpeechRecognition();
     if (recognitionRef.current) {
-      finalTranscriptRef.current = "";
-      setTranscript("");
       try {
         recognitionRef.current.start();
         setIsListening(true);
-      } catch {
-        // Already started
-      }
+      } catch {}
     }
   }, [initSpeechRecognition]);
 
-  // Stop listening
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {
-        // Already stopped
-      }
+      try { recognitionRef.current.stop(); } catch {}
       setIsListening(false);
     }
   }, []);
 
-  // Speak text using Web Speech API
   const speak = useCallback((text: string) => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
-
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-
-    // Try to find a good voice
+    
     const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(
-      (v) => v.lang.startsWith("en") && v.name.includes("Google")
-    ) || voices.find((v) => v.lang.startsWith("en"));
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-    }
+    const voice = voices.find(v => v.lang.startsWith("en") && v.name.includes("Google")) || voices.find(v => v.lang.startsWith("en"));
+    if (voice) utterance.voice = voice;
 
     utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      if (isAutoMode && isOpen) {
+        setTimeout(() => {
+          if (isAutoMode && isOpen) {
+            finalTranscriptRef.current = "";
+            setTranscript("");
+            startListening();
+          }
+        }, 300);
+      }
+    };
     utterance.onerror = () => setIsSpeaking(false);
-
     window.speechSynthesis.speak(utterance);
-  }, []);
+  }, [isAutoMode, isOpen, startListening]);
 
-  // Stop speaking
   const stopSpeaking = useCallback(() => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
@@ -166,101 +158,83 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
     }
   }, []);
 
-  // Initialize camera when opened
+  const captureFrame = useCallback((): string | null => {
+    if (!videoRef.current || !canvasRef.current) return null;
+    const canvas = canvasRef.current;
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(videoRef.current, 0, 0);
+    return canvas.toDataURL("image/jpeg", 0.7);
+  }, []);
+
+  const handleProcessInput = useCallback(async () => {
+    const text = finalTranscriptRef.current.trim();
+    if (!text && !cameraStream) return;
+
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    stopListening();
+    setIsProcessing(true);
+    isProcessingRef.current = true;
+    setLastResponse("");
+
+    try {
+      const frame = captureFrame();
+      await sendMessage(text || "What do you see?", frame || undefined);
+    } catch (err) {
+      console.error("Camera talk error:", err);
+      setLastResponse("Sorry, I encountered an error.");
+      setIsProcessing(false);
+      isProcessingRef.current = false;
+      if (isAutoMode) setTimeout(() => startListening(), 1000);
+    }
+  }, [captureFrame, sendMessage, stopListening, isAutoMode, startListening, cameraStream]);
+
   useEffect(() => {
     if (isOpen && isCameraOn) {
       startCamera();
       prevMessageCountRef.current = activeConversation?.messages.length || 0;
+      recognitionRef.current = initSpeechRecognition();
+      if (isAutoMode) setTimeout(() => startListening(), 1000);
     }
+
     return () => {
       if (!isOpen) {
         stopCamera();
         stopListening();
         stopSpeaking();
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       }
     };
-  }, [isOpen, isCameraOn, startCamera, stopCamera, stopListening, stopSpeaking, activeConversation?.messages.length]);
+  }, [isOpen, isCameraOn, startCamera, initSpeechRecognition, isAutoMode, startListening, stopCamera, stopListening, stopSpeaking]);
 
-  // Re-start camera when facing mode changes
   useEffect(() => {
-    if (isOpen && isCameraOn && cameraStream) {
-      startCamera();
-    }
-  }, [facingMode]);
-
-  // Watch for new assistant messages and speak them
-  useEffect(() => {
-    if (!activeConversation || !isProcessing) return;
-
+    if (!activeConversation || !isProcessingRef.current) return;
     const currentCount = activeConversation.messages.length;
     if (currentCount > prevMessageCountRef.current) {
-      const newMessages = activeConversation.messages.slice(prevMessageCountRef.current);
-      const assistantMsg = newMessages.find((m) => m.role === "assistant");
-      if (assistantMsg) {
-        setLastResponse(assistantMsg.content);
-        speak(assistantMsg.content);
+      const newMsg = activeConversation.messages.slice(prevMessageCountRef.current).find((m: any) => m.role === "assistant");
+      if (newMsg) {
+        setLastResponse(newMsg.content);
+        speak(newMsg.content);
         setIsProcessing(false);
-        setTranscript("");
-        finalTranscriptRef.current = "";
+        isProcessingRef.current = false;
       }
     }
     prevMessageCountRef.current = currentCount;
-  }, [activeConversation?.messages.length, isProcessing, speak]);
+  }, [activeConversation?.messages.length, speak]);
 
-  // Capture frame from video as base64
-  const captureFrame = useCallback((): string | null => {
-    if (!videoRef.current || !canvasRef.current) return null;
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-    ctx.drawImage(video, 0, 0);
-    return canvas.toDataURL("image/jpeg", 0.7);
-  }, []);
-
-  // Process voice + camera frame
-  const handleProcessInput = async () => {
-    const currentTranscript = finalTranscriptRef.current || transcript;
-    if (!currentTranscript.trim() && !cameraStream) return;
-
-    stopListening();
-    setIsProcessing(true);
-    setLastResponse("");
-
-    try {
-      const imageFrame = captureFrame();
-      const userMessage = currentTranscript.trim() || "What do you see?";
-
-      await sendMessage(userMessage, imageFrame || undefined);
-    } catch (err) {
-      console.error("Camera talk error:", err);
-      setLastResponse("Sorry, I encountered an error processing your request.");
-      setIsProcessing(false);
-    }
-  }, [transcript, cameraStream, captureFrame, sendMessage, stopListening]);
-
-  // Auto-process when user stops speaking
-  useEffect(() => {
-    if (!isListening && (finalTranscriptRef.current || transcript) && !isProcessing) {
-      const timer = setTimeout(() => {
-        handleProcessInput();
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [isListening, transcript, isProcessing, handleProcessInput]);
-
-  // Cleanup on close
   useEffect(() => {
     if (!isOpen) {
       stopCamera();
       stopListening();
       stopSpeaking();
       setIsProcessing(false);
+      isProcessingRef.current = false;
       setLastResponse("");
       setTranscript("");
       finalTranscriptRef.current = "";
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
     }
   }, [isOpen, stopCamera, stopListening, stopSpeaking]);
 
@@ -268,66 +242,60 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background/98 backdrop-blur-sm">
-      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-surface">
         <div className="flex items-center gap-3">
           <Camera className="h-5 w-5 text-gemstone-400" />
           <h2 className="font-heading text-lg font-semibold text-text-primary">Camera Talk</h2>
+          {isAutoMode && (
+            <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-400">Auto</span>
+          )}
         </div>
-        <button
-          onClick={onClose}
-          className="rounded-full p-2 text-text-muted hover:text-text-primary hover:bg-surface transition-colors"
-        >
+        <button onClick={onClose} className="rounded-full p-2 text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
           <X className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Camera View */}
       <div className="flex-1 relative flex items-center justify-center bg-black/50 p-4">
         {cameraError ? (
           <div className="text-center p-8">
             <p className="text-ruby-400 mb-4">{cameraError}</p>
-            <button
-              onClick={startCamera}
-              className="rounded-md bg-gemstone-600 px-4 py-2 text-sm text-white hover:bg-gemstone-500"
-            >
+            <button onClick={startCamera} className="rounded-md bg-gemstone-600 px-4 py-2 text-sm text-white hover:bg-gemstone-500">
               Retry Camera
             </button>
           </div>
         ) : (
           <div className="relative w-full max-w-2xl aspect-video rounded-lg overflow-hidden bg-black shadow-2xl">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="h-full w-full object-cover"
-            />
-
-            {/* Camera off overlay */}
+            <video ref={videoRef} autoPlay playsInline muted className="h-full w-full object-cover" />
             {!isCameraOn && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/80">
                 <p className="text-text-muted">Camera is off</p>
               </div>
             )}
-
-            {/* Processing overlay */}
             {isProcessing && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                 <Loader2 className="h-12 w-12 animate-spin text-gemstone-400" />
               </div>
             )}
+            {isListening && !isProcessing && (
+              <div className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5">
+                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-xs text-white">Listening...</span>
+              </div>
+            )}
+            {isSpeaking && (
+              <div className="absolute top-4 right-4 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5">
+                <Volume2 className="h-3 w-3 text-emerald-400 animate-pulse" />
+                <span className="text-xs text-white">Speaking...</span>
+              </div>
+            )}
           </div>
         )}
-
-        {/* Hidden canvas for frame capture */}
         <canvas ref={canvasRef} className="hidden" />
       </div>
 
-      {/* Transcript Display */}
       {(transcript || lastResponse) && (
-        <div className="px-4 py-3 border-t border-surface bg-surface/50">
-          {transcript && (
+        <div className="px-4 py-3 border-t border-surface bg-surface/50 max-h-32 overflow-y-auto">
+          {transcript && isListening && (
             <div className="text-center text-sm text-text-secondary mb-2">
               <span className="font-medium text-gemstone-400">You:</span> {transcript}
             </div>
@@ -340,10 +308,8 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
         </div>
       )}
 
-      {/* Controls */}
       <div className="p-6 border-t border-surface">
         <div className="flex items-center justify-center gap-6">
-          {/* Camera toggle */}
           <button
             onClick={() => {
               if (isCameraOn) {
@@ -354,21 +320,13 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
                 startCamera();
               }
             }}
-            className={`rounded-full p-4 transition-colors ${
-              isCameraOn
-                ? "bg-surface text-text-primary"
-                : "bg-surface-elevated text-text-muted"
-            }`}
+            className={`rounded-full p-4 transition-colors ${isCameraOn ? "bg-surface text-text-primary" : "bg-surface-elevated text-text-muted"}`}
           >
             <Camera className="h-5 w-5" />
           </button>
 
-          {/* Switch camera */}
           {isCameraOn && (
-            <button
-              onClick={toggleCamera}
-              className="rounded-full p-3 text-text-muted hover:text-text-primary transition-colors"
-            >
+            <button onClick={toggleCamera} className="rounded-full p-3 text-text-muted hover:text-text-primary transition-colors">
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M20 16V7a2 2 0 0 0-2-2h-3l-2-2H9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2z" />
                 <circle cx="12" cy="11" r="3" />
@@ -378,66 +336,54 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
             </button>
           )}
 
-          {/* Microphone */}
           <button
             onClick={() => {
-              if (isListening) {
+              if (isAutoMode) {
+                setIsAutoMode(false);
                 stopListening();
               } else {
-                startListening();
+                isListening ? stopListening() : startListening();
               }
             }}
             disabled={isProcessing}
             className={`flex h-16 w-16 items-center justify-center rounded-full transition-all ${
-              isListening
-                ? "bg-ruby-500 text-white shadow-lg shadow-ruby-500/30 scale-110 animate-pulse"
-                : isProcessing
-                ? "bg-surface-elevated text-text-muted cursor-wait"
-                : "bg-gemstone-600 text-white shadow-lg shadow-gemstone-600/30 hover:bg-gemstone-500"
+              isListening ? "bg-ruby-500 text-white shadow-lg shadow-ruby-500/30 scale-110 animate-pulse" : 
+              isProcessing ? "bg-surface-elevated text-text-muted cursor-wait" : 
+              isAutoMode ? "bg-gemstone-600/50 text-white" : 
+              "bg-gemstone-600 text-white shadow-lg shadow-gemstone-600/30 hover:bg-gemstone-500"
             }`}
           >
-            {isProcessing ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : isListening ? (
-              <MicOff className="h-6 w-6" />
-            ) : (
-              <Mic className="h-6 w-6" />
-            )}
+            {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : isListening ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </button>
 
-          {/* Voice output toggle */}
           <button
-            onClick={stopSpeaking}
-            className={`rounded-full p-4 transition-colors ${
-              isSpeaking
-                ? "bg-gemstone-500/20 text-gemstone-400"
-                : "bg-surface text-text-muted hover:text-text-primary"
-            }`}
+            onClick={() => {
+              const newAuto = !isAutoMode;
+              setIsAutoMode(newAuto);
+              if (newAuto && !isListening && !isProcessing) {
+                finalTranscriptRef.current = "";
+                setTranscript("");
+                startListening();
+              } else if (!newAuto) {
+                stopListening();
+              }
+            }}
+            className={`rounded-full p-4 transition-colors ${isAutoMode ? "bg-emerald-500/20 text-emerald-400" : "bg-surface text-text-muted hover:text-text-primary"}`}
           >
+            <MessageSquare className="h-5 w-5" />
+          </button>
+
+          <button onClick={stopSpeaking} className={`rounded-full p-4 transition-colors ${isSpeaking ? "bg-gemstone-500/20 text-gemstone-400" : "bg-surface text-text-muted hover:text-text-primary"}`}>
             {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
           </button>
-
-          {/* Manual send button */}
-          {transcript && !isListening && (
-            <button
-              onClick={handleProcessInput}
-              disabled={isProcessing}
-              className="rounded-md bg-gemstone-600 px-6 py-3 text-sm font-medium text-white hover:bg-gemstone-500 transition-colors disabled:opacity-50"
-            >
-              Send
-            </button>
-          )}
         </div>
 
-        {/* Status text */}
         <p className="mt-4 text-center text-xs text-text-muted">
-          {isListening
-            ? "Listening... Speak now"
-            : isProcessing
-            ? "Processing..."
-            : lastResponse
-            ? "Response complete"
-            : "Tap the microphone and speak"}
+          {isListening ? "Listening... (auto-stops after 1.5s silence)" : 
+           isProcessing ? "Processing..." : 
+           isSpeaking ? "Speaking..." : 
+           isAutoMode ? "Auto mode: Just start talking!" : 
+           "Tap mic to talk"}
         </p>
       </div>
     </div>
