@@ -23,10 +23,20 @@ export default function ForgotPasswordForm() {
     setError(null);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to send reset email");
+      }
+
       setIsSent(true);
-    } catch {
-      setError("An unexpected error occurred");
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
