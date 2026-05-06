@@ -6,11 +6,13 @@ import { Sidebar } from "@/components/chat/Sidebar";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatArea } from "@/components/chat/ChatArea";
 import { VoiceMode } from "@/components/chat/voice/VoiceMode";
+import { CameraTalk } from "@/components/chat/CameraTalk";
 import { ChatProvider } from "@/lib/chat-context";
 
 export default function AssistantLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+  const [cameraTalkOpen, setCameraTalkOpen] = useState(false);
 
   return (
     <ChatProvider>
@@ -27,10 +29,11 @@ export default function AssistantLayout() {
             </button>
           </header>
           <ChatArea />
-          <ChatInput />
+          <ChatInput onCameraTalkOpen={() => setCameraTalkOpen(true)} />
         </div>
       </div>
       <VoiceMode isOpen={voiceModeOpen} onClose={() => setVoiceModeOpen(false)} />
+      <CameraTalk isOpen={cameraTalkOpen} onClose={() => setCameraTalkOpen(false)} />
     </ChatProvider>
   );
 }

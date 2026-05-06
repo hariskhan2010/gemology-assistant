@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect, type KeyboardEvent } from "react";
-import { Send, Paperclip, Camera } from "lucide-react";
+import { Send, Paperclip, Camera, Video } from "lucide-react";
 import { useChat } from "@/lib/chat-context";
 import { CameraCapture } from "@/components/chat/media/CameraCapture";
 import { VoiceInput } from "@/components/chat/voice/VoiceInput";
 import { cn } from "@/lib/utils";
 
-export function ChatInput() {
+export function ChatInput({ onCameraTalkOpen }: { onCameraTalkOpen?: () => void }) {
   const [value, setValue] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -107,6 +107,13 @@ export function ChatInput() {
               onClick={() => setCameraOpen(true)}
             >
               <Camera className="h-4 w-4" />
+            </button>
+            <button
+              className="shrink-0 rounded p-1.5 text-text-muted hover:text-gemstone-400 transition-colors"
+              title="Camera Talk"
+              onClick={onCameraTalkOpen}
+            >
+              <Video className="h-4 w-4" />
             </button>
             <textarea
               ref={textareaRef}

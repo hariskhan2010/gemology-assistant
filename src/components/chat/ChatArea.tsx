@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/lib/chat-context";
+import { ChatInput } from "@/components/chat/ChatInput";
+import { CameraTalk } from "@/components/chat/CameraTalk";
 
 export function ChatArea() {
   const { activeConversation, isLoading, error, retryLastMessage } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [isCameraTalkOpen, setIsCameraTalkOpen] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
