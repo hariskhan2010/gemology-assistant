@@ -157,21 +157,49 @@ export async function POST(request: Request) {
       systemInstruction: fullPrompt,
     });
 
-    const result = await model.generateContent({
+    const stream = await model.generateContentStream({
       contents,
     });
 
-    const responseText = result.response.text();
-    
-    // Save assistant response to DB
-    if (conversationId) {
-      await appendMessage(conversationId, {
-        role: "model",
-        content: responseText,
-      });
-    }
+    const encoder = new TextEncoder();
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        let fullText = "";
 
-    return NextResponse.json({ response: responseText });
+        try {
+          for await (const chunk of stream.stream) {
+            const chunkText = chunk.text();
+            if (chunkText) {
+              fullText += chunkText;
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: chunkText })}\n\n`));
+            }
+          }
+
+          // Save assistant response to DB after stream completes
+          if (conversationId && fullText) {
+            await appendMessage(conversationId, {
+              role: "model",
+              content: fullText,
+            }).catch((e) => console.error("Failed to save assistant message:", e));
+          }
+
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        } catch (e) {
+          console.error("Stream error:", e);
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "Stream failed" })}\n\n`));
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(readableStream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
   } catch (error: any) {
     console.error("Chat API error:", error);
     return NextResponse.json(

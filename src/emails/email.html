@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Your GemSage Password</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #0a0f0d;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    .email-container {
+      max-width: 560px;
+      margin: 0 auto;
+      background: #0f1713;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
+      padding: 36px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #34d399, #10b981, #34d399);
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: block;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 6px;
+    }
+
+    .content {
+      padding: 40px 36px;
+    }
+
+    .greeting {
+      font-size: 18px;
+      color: #10b981;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .message {
+      font-size: 15px;
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+
+    .button-container {
+      text-align: center;
+      margin: 36px 0;
+    }
+
+    .reset-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 15px 44px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .reset-button:hover {
+      box-shadow: 0 8px 28px rgba(16, 185, 129, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .details-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 28px 0;
+    }
+
+    .details-box p {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .details-box strong {
+      color: #10b981;
+    }
+
+    .link-fallback {
+      margin: 24px 0 0;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .link-fallback p {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .link-fallback a {
+      color: #34d399;
+      text-decoration: underline;
+      word-break: break-all;
+      font-size: 13px;
+    }
+
+    .footer {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 28px 36px;
+      text-align: center;
+      border-top: 1px solid rgba(16, 185, 129, 0.1);
+    }
+
+    .footer-logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: #10b981;
+      margin-bottom: 8px;
+    }
+
+    .footer p {
+      font-size: 13px;
+      color: #64748b;
+      margin: 4px 0;
+    }
+
+    .footer a {
+      color: #34d399;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-divider {
+      width: 40px;
+      height: 2px;
+      background: rgba(16, 185, 129, 0.3);
+      margin: 12px auto;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .email-container { border-radius: 0; }
+      .content { padding: 28px 20px; }
+      .header { padding: 28px 16px; }
+      .header h1 { font-size: 20px; }
+      .reset-button { padding: 14px 32px; font-size: 14px; }
+      .footer { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="padding: 32px 16px;">
+    <tr>
+      <td align="center">
+        <div class="email-container">
+
+          <!-- Header -->
+          <div class="header">
+            <img src="https://gemology-assistant.vercel.app/gem_logo.png" alt="GemSage" class="logo">
+            <h1>Reset Your Password</h1>
+            <p>Secure link expires in 1 hour</p>
+          </div>
+
+          <!-- Content -->
+          <div class="content">
+            <div class="greeting">Hi {{to_name}},</div>
+
+            <div class="message">
+              We received a request to reset the password for your GemSage account. 
+              Click the button below to set a new password and regain access.
+            </div>
+
+            <div class="button-container">
+              <a href="{{reset_link}}" class="reset-button" target="_blank">
+                Reset Password
+              </a>
+            </div>
+
+            <div class="details-box">
+              <p><strong>Didn't request this?</strong> If you didn't ask for a password reset, you can safely ignore this email. Your account remains secure and no changes have been made.</p>
+            </div>
+
+            <div class="link-fallback">
+              <p><strong>Button not working?</strong> Copy and paste this link into your browser:</p>
+              <p style="margin-top: 6px;"><a href="{{reset_link}}">{{reset_link}}</a></p>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="footer">
+            <div class="footer-logo">✦ GemSage</div>
+            <div class="footer-divider"></div>
+            <p>Your AI-Powered Gemology Assistant</p>
+            <p style="margin-top: 8px;">
+              <a href="#">Visit Website</a> &nbsp;•&nbsp; <a href="#">Contact Support</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 11px; color: #475569;">
+              Sent to {{to_email}} &bull; GemSage &copy; 2026
+            </p>
+          </div>
+
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

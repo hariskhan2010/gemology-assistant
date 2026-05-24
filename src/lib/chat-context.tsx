@@ -18,6 +18,13 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
+function getConvMessages(convs: Conversation[], convId: string | null): { role: string; content: string; image?: string }[] {
+  if (!convId) return [];
+  const conv = convs.find((c) => c.id === convId);
+  if (!conv) return [];
+  return conv.messages.map((m) => ({ role: m.role, content: m.content, image: m.image }));
+}
+
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [conversations, setConversations] = useState<Conversation[]>(mockConversations);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -41,11 +48,15 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     if (activeId === id) setActiveId(null);
   }, [activeId]);
 
-  const streamResponse = async (messages: { role: string; content: string; image?: string }[]): Promise<string> => {
+  const doStream = useCallback(async (
+    targetId: string,
+    assistantId: string,
+    apiMessages: { role: string; content: string; image?: string }[],
+  ) => {
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({ messages: apiMessages, conversationId: targetId }),
     });
 
     if (!response.ok) {
@@ -57,21 +68,52 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     if (!reader) throw new Error("No response body");
 
     const decoder = new TextDecoder();
-    let fullText = "";
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      fullText += decoder.decode(value, { stream: true });
-    }
 
-    return fullText;
-  };
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const data = line.slice(6);
+        if (data === "[DONE]") return;
+
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.text) {
+            setConversations((prev) =>
+              prev.map((c) =>
+                c.id === targetId
+                  ? {
+                      ...c,
+                      messages: c.messages.map((m) =>
+                        m.id === assistantId
+                          ? { ...m, content: m.content + parsed.text }
+                          : m
+                      ),
+                      updatedAt: new Date(),
+                    }
+                  : c
+              )
+            );
+          }
+        } catch {
+          // skip malformed JSON
+        }
+      }
+    }
+  }, []);
 
   const sendMessage = useCallback(async (content: string, image?: string) => {
     setIsLoading(true);
     setError(null);
-    const userMessage: Message = {
+
+    const userMsg: Message = {
       id: `msg-${Date.now()}`,
       role: "user",
       content,
@@ -79,117 +121,143 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date(),
     };
 
-    let targetId: string;
+    const assistantId = `msg-${Date.now() + 1}`;
+    const emptyAssistant: Message = {
+      id: assistantId,
+      role: "assistant",
+      content: "",
+      timestamp: new Date(),
+    };
 
-    if (activeId) {
-      targetId = activeId;
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === activeId
-            ? { ...c, messages: [...c.messages, userMessage], updatedAt: new Date() }
-            : c
-        )
-      );
-    } else {
+    let targetId = activeId;
+    let isNewConv = false;
+
+    if (!targetId) {
       targetId = `conv-${Date.now()}`;
+      isNewConv = true;
+    }
+
+    const apiMessages = isNewConv
+      ? [{ role: userMsg.role, content: userMsg.content, image: userMsg.image }]
+      : [
+          ...getConvMessages(conversations, activeId),
+          { role: userMsg.role, content: userMsg.content, image: userMsg.image },
+        ];
+
+    if (isNewConv) {
       const newConv: Conversation = {
         id: targetId,
         title: image ? "Image analysis" : content.slice(0, 40) + (content.length > 40 ? "..." : ""),
-        messages: [userMessage],
+        messages: [userMsg, emptyAssistant],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       setConversations((prev) => [newConv, ...prev]);
       setActiveId(targetId);
-    }
-
-    const currentConv = activeId
-      ? conversations.find((c) => c.id === activeId)
-      : { messages: [userMessage] };
-
-    const apiMessages = (currentConv?.messages || [userMessage]).map((m) => ({
-      role: m.role,
-      content: m.content,
-      image: m.image,
-    }));
-
-    try {
-      const responseText = await streamResponse(apiMessages);
-
-      const assistantMessage: Message = {
-        id: `msg-${Date.now() + 1}`,
-        role: "assistant",
-        content: responseText,
-        timestamp: new Date(),
-      };
-
+    } else {
       setConversations((prev) =>
         prev.map((c) =>
           c.id === targetId
-            ? { ...c, messages: [...c.messages, assistantMessage], updatedAt: new Date() }
+            ? { ...c, messages: [...c.messages, userMsg, emptyAssistant], updatedAt: new Date() }
             : c
         )
       );
+    }
+
+    try {
+      await doStream(targetId, assistantId, apiMessages);
     } catch (err) {
       const errorText = err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorText);
 
-      const errorMessage: Message = {
-        id: `msg-${Date.now() + 1}`,
-        role: "system",
-        content: `Error: ${errorText}. Please try again.`,
-        timestamp: new Date(),
-      };
-
       setConversations((prev) =>
         prev.map((c) =>
           c.id === targetId
-            ? { ...c, messages: [...c.messages, errorMessage], updatedAt: new Date() }
+            ? {
+                ...c,
+                messages: c.messages.map((m) =>
+                  m.id === assistantId
+                    ? { ...m, content: `Error: ${errorText}. Please try again.`, role: "system" }
+                    : m
+                ),
+                updatedAt: new Date(),
+              }
             : c
         )
       );
     } finally {
       setIsLoading(false);
     }
-  }, [activeId, conversations]);
+  }, [activeId, conversations, doStream]);
 
   const retryLastMessage = useCallback(async () => {
     if (!activeConversation) return;
-    const messages = activeConversation.messages;
-    const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
-    if (!lastUserMessage) return;
+    const msgs = activeConversation.messages;
+    const lastUser = [...msgs].reverse().find((m) => m.role === "user");
+    if (!lastUser) return;
+
+    // Remove the last assistant message if there is one
+    const lastMsg = msgs[msgs.length - 1];
+    const hasTrailingAssistant = lastMsg.role === "assistant" || lastMsg.role === "system";
+
+    if (hasTrailingAssistant) {
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === activeId
+            ? { ...c, messages: c.messages.slice(0, -1), updatedAt: new Date() }
+            : c
+        )
+      );
+    }
 
     setIsLoading(true);
     setError(null);
 
-    const apiMessages = messages
-      .filter((m, i) => i < messages.indexOf(lastUserMessage) + 1)
-      .map((m) => ({ role: m.role, content: m.content, image: m.image }));
+    const assistantId = `msg-${Date.now()}`;
+    const emptyAssistant: Message = {
+      id: assistantId,
+      role: "assistant",
+      content: "",
+      timestamp: new Date(),
+    };
+
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === activeId
+          ? { ...c, messages: [...c.messages, emptyAssistant], updatedAt: new Date() }
+          : c
+      )
+    );
+
+    const apiMessages = hasTrailingAssistant
+      ? msgs.slice(0, -1).map((m) => ({ role: m.role, content: m.content, image: m.image }))
+      : msgs.map((m) => ({ role: m.role, content: m.content, image: m.image }));
 
     try {
-      const responseText = await streamResponse(apiMessages);
-
-      const assistantMessage: Message = {
-        id: `msg-${Date.now()}`,
-        role: "assistant",
-        content: responseText,
-        timestamp: new Date(),
-      };
+      await doStream(activeId!, assistantId, apiMessages);
+    } catch (err) {
+      const errorText = err instanceof Error ? err.message : "Failed to retry";
+      setError(errorText);
 
       setConversations((prev) =>
         prev.map((c) =>
           c.id === activeId
-            ? { ...c, messages: [...c.messages, assistantMessage], updatedAt: new Date() }
+            ? {
+                ...c,
+                messages: c.messages.map((m) =>
+                  m.id === assistantId
+                    ? { ...m, content: `Error: ${errorText}. Please try again.`, role: "system" }
+                    : m
+                ),
+                updatedAt: new Date(),
+              }
             : c
         )
       );
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to retry";
-      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  }, [activeConversation, activeId]);
+  }, [activeConversation, activeId, doStream]);
 
   return (
     <ChatContext.Provider value={{
