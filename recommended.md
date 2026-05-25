@@ -14,7 +14,7 @@
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Unique title tags per page | ✅ | `usePageTitle` hook on 12 client pages (encyclopedia list, detail, compare, gallery, saved, profile, signin, signup, assistant, etc.) |
+| Unique title tags per page | ✅ | Server-rendered metadata on all pages; `usePageTitle` as client-side fallback |
 | OG image (1200×630) | ✅ | `/public/og-image.svg` — green gem theme, configured in root layout |
 | Unblock crawler paths | ✅ | `robots.txt` allows `/assistant/` and `/auth/` |
 | Expand sitemap | ✅ | 47 URLs including blog articles, comparison pages, gem detail pages, static routes |
