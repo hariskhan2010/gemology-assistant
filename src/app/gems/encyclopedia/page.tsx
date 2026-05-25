@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Search, Gem } from "lucide-react";
 import { gemstones, categories } from "@/lib/knowledge/gemstones";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 export default function EncyclopediaPage() {
+  usePageTitle("Gemstone Encyclopedia");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 

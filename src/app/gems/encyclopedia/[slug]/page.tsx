@@ -5,14 +5,31 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { notFound } from "next/navigation";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 export default function GemDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const gem = gemstones.find((g) => g.slug === slug);
+  usePageTitle(gem ? `${gem.name} – Properties, Price & Treatments` : "Gem Guide");
 
   if (!gem) notFound();
 
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: gem.name,
+            category: `${gem.category} Gemstone`,
+            description: gem.description,
+            material: gem.crystal,
+            brand: { "@type": "Brand", name: "GemSage" },
+          }),
+        }}
+      />
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 py-12">
         <Link href="/gems/encyclopedia" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-gemstone-400 transition-colors">
@@ -103,5 +120,6 @@ export default function GemDetailPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

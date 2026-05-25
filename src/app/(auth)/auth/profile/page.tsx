@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User, Mail, Calendar, ArrowLeft, Save, Trash2, Loader2, Eye, EyeOff, KeyRound } from "lucide-react";
 import Link from "next/link";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 interface ProfileData {
   id: string;
@@ -13,6 +14,7 @@ interface ProfileData {
 }
 
 export default function ProfilePage() {
+  usePageTitle("Profile Settings");
   const router = useRouter();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [name, setName] = useState("");

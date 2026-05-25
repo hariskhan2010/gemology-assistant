@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Trash2, Loader2, Gem, ExternalLink, ImageIcon } from "lucide-react";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 interface SavedGem {
   id: string;
@@ -15,6 +16,7 @@ interface SavedGem {
 }
 
 export default function SavedGemsPage() {
+  usePageTitle("Saved Gem Collection");
   const router = useRouter();
   const [gems, setGems] = useState<SavedGem[]>([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -34,6 +34,15 @@ export const metadata: Metadata = {
     description: "Expert gemology guidance powered by AI. Identify gems, learn properties, and master faceting.",
     type: "website",
     locale: "en_US",
+    url: "https://gemology-assistant.vercel.app",
+    siteName: "GemSage",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GemSage - AI Gemology Assistant",
+    description: "Identify gems, learn properties, and master faceting with AI.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -42,6 +51,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   other: {
     "theme-color": "#059669",
+    "og:image:width": "1200",
+    "og:image:height": "630",
   },
 };
 
@@ -54,6 +65,21 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${jetbrains.variable} antialiased`}>
       <body className="min-h-screen flex flex-col bg-background text-text-primary transition-colors duration-300">
         <ThemeProvider>{children}</ThemeProvider>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "GemSage",
+              applicationCategory: "EducationalApplication",
+              operatingSystem: "Web",
+              description: "AI-powered gemology assistant for gem identification, faceting guidance, and gemstone education.",
+              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+              author: { "@type": "Organization", name: "GemSage" },
+            }),
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

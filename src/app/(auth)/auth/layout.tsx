@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Authentication | GemSage",
+  title: {
+    default: "Authentication | GemSage",
+    template: "%s | GemSage",
+  },
 };
 
 export const dynamic = "force-dynamic";

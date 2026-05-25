@@ -157,7 +157,7 @@ export default function Home() {
             <p className="mx-auto mt-4 max-w-xl text-text-secondary">
               Join thousands of gemologists and enthusiasts using GemSage to unlock the world of precious stones.
             </p>
-            <Link href="/auth" className="group mt-8 inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
+            <Link href="/auth/signup" className="group mt-8 inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
               Get Started Now
               <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />

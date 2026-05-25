@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, X, Plus } from "lucide-react";
 import { gemstones, type GemstoneData } from "@/lib/knowledge/gemstones";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 const fields: { key: keyof GemstoneData; label: string }[] = [
   { key: "category", label: "Category" },
@@ -19,6 +20,7 @@ const fields: { key: keyof GemstoneData; label: string }[] = [
 ];
 
 export default function ComparePage() {
+  usePageTitle("Gem Comparison Tool");
   const [selected, setSelected] = useState<GemstoneData[]>([]);
 
   const handleAdd = (slug: string) => {

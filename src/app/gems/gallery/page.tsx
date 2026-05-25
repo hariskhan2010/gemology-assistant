@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, ImageIcon, X, ZoomIn } from "lucide-react";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 interface GalleryImage {
   image: string;
@@ -13,6 +14,7 @@ interface GalleryImage {
 }
 
 export default function GalleryPage() {
+  usePageTitle("Image Gallery");
   const router = useRouter();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /assistant/
-Disallow: /auth/
+Disallow: /auth/forgot-password
+Disallow: /auth/reset-password
 
-Sitemap: https://gemsage.ai/sitemap.xml
+Sitemap: https://gemology-assistant.vercel.app/sitemap.xml
