@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, Plus, Search, Settings, LogOut, Gem, User, Headphones } from "lucide-react";
 import { useChat } from "@/lib/chat-context";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -60,9 +61,12 @@ export function Sidebar({ isOpen, onClose, onVoiceMode }: SidebarProps) {
             <Gem className="h-6 w-6 text-gemstone-500" />
             <span className="font-heading text-lg font-bold text-text-primary">GemSage</span>
           </Link>
-          <button onClick={onClose} className="lg:hidden text-text-muted hover:text-text-primary">
-            <Menu className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <button onClick={onClose} className="lg:hidden text-text-muted hover:text-text-primary">
+              <Menu className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <div className="p-3">
@@ -130,7 +134,7 @@ export function Sidebar({ isOpen, onClose, onVoiceMode }: SidebarProps) {
               <span>Voice Mode</span>
             </button>
           )}
-          <div className="flex items-center gap-3">
+          <Link href="/auth/profile" className="flex items-center gap-3 rounded-md p-1.5 hover:bg-surface transition-colors group">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gemstone-600/30 text-gemstone-400">
               <User className="h-4 w-4" />
             </div>
@@ -139,15 +143,15 @@ export function Sidebar({ isOpen, onClose, onVoiceMode }: SidebarProps) {
               <p className="text-xs text-text-muted truncate">{user?.email || "Not signed in"}</p>
             </div>
             {user ? (
-              <button onClick={handleSignOut} className="rounded p-1.5 text-text-muted hover:text-ruby-500 transition-colors" title="Sign out">
+              <button onClick={(e) => { e.preventDefault(); handleSignOut(); }} className="rounded p-1.5 text-text-muted hover:text-ruby-500 transition-colors" title="Sign out">
                 <LogOut className="h-4 w-4" />
               </button>
             ) : (
-              <Link href="/auth" className="rounded p-1.5 text-text-muted hover:text-text-primary transition-colors" title="Sign in">
+              <span className="rounded p-1.5 text-text-muted" title="Sign in">
                 <Settings className="h-4 w-4" />
-              </Link>
+              </span>
             )}
-          </div>
+          </Link>
         </div>
       </aside>
     </>

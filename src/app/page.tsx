@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Search, Camera, BookOpen, Sparkles, Shield, Zap } from "lucide-react";
+import { Search, Camera, BookOpen, Sparkles, Shield, Zap, Library, Columns3, Bookmark, Image, User } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -11,36 +11,63 @@ const features = [
     title: "Gem Identification",
     description: "Upload images or describe a gemstone to get instant AI-powered identification with confidence scores.",
     badge: "AI Powered",
+    href: "/assistant",
   },
   {
     icon: Camera,
     title: "Visual Analysis",
     description: "Capture gems with your camera for real-time analysis of color, clarity, cut, and carat characteristics.",
     badge: "Camera",
+    href: "/assistant",
   },
   {
     icon: BookOpen,
     title: "Faceting Guidance",
     description: "Get step-by-step faceting instructions with angles, diagrams, and expert tips for any gemstone.",
     badge: "Guide",
+    href: "/assistant",
   },
   {
-    icon: Sparkles,
-    title: "Expert Knowledge",
-    description: "Access a comprehensive database of gemstone properties, origins, treatments, and market values.",
-    badge: "Database",
+    icon: Library,
+    title: "Gemstone Encyclopedia",
+    description: "Browse a comprehensive directory of gemstones with detailed properties, origins, treatments, and price ranges.",
+    badge: "Reference",
+    href: "/gems/encyclopedia",
+  },
+  {
+    icon: Columns3,
+    title: "Side-by-Side Compare",
+    description: "Compare gemstones across all key properties including hardness, RI, SG, and price ranges.",
+    badge: "Tool",
+    href: "/gems/compare",
+  },
+  {
+    icon: Bookmark,
+    title: "Saved Gem Collection",
+    description: "Bookmark identified stones and build your personal gem collection for easy reference.",
+    badge: "Library",
+    href: "/gems/saved",
+  },
+  {
+    icon: Image,
+    title: "Image History",
+    description: "Browse all previously uploaded gem photos in one place with full-size preview.",
+    badge: "Gallery",
+    href: "/gems/gallery",
+  },
+  {
+    icon: User,
+    title: "Profile & Settings",
+    description: "Manage your account, change password, and control your preferences including theme.",
+    badge: "Account",
+    href: "/auth/profile",
   },
   {
     icon: Shield,
     title: "Authenticated Advice",
     description: "All recommendations are grounded in gemological standards and verified by industry references.",
     badge: "Verified",
-  },
-  {
-    icon: Zap,
-    title: "Instant Responses",
-    description: "Get immediate answers to your gemology questions through natural conversation with the AI assistant.",
-    badge: "Fast",
+    href: "/assistant",
   },
 ];
 
@@ -106,16 +133,18 @@ export default function Home() {
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
-                <Card key={feature.title} variant="glass" className="card-3d group">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gemstone-600/20 text-gemstone-400 shadow-inner transition-all group-hover:bg-gemstone-600/30 group-hover:shadow-gemstone-500/10">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold">{feature.title}</h3>
-                    <Badge variant="default">{feature.badge}</Badge>
-                  </div>
-                  <p className="mt-2 text-sm text-text-secondary">{feature.description}</p>
-                </Card>
+                <Link key={feature.title} href={feature.href}>
+                  <Card variant="glass" className="card-3d group cursor-pointer h-full">
+                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gemstone-600/20 text-gemstone-400 shadow-inner transition-all group-hover:bg-gemstone-600/30 group-hover:shadow-gemstone-500/10">
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-semibold">{feature.title}</h3>
+                      <Badge variant="default">{feature.badge}</Badge>
+                    </div>
+                    <p className="mt-2 text-sm text-text-secondary">{feature.description}</p>
+                  </Card>
+                </Link>
               );
             })}
           </div>

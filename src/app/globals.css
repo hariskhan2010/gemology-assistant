@@ -40,6 +40,17 @@
   --radius-full: 9999px;
 }
 
+.light {
+  --color-background: #f8faf9;
+  --color-background-secondary: #f0f5f2;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #e8f0ec;
+  --color-text-primary: #0a1f14;
+  --color-text-secondary: #065f46;
+  --color-text-muted: #059669;
+  --color-border: #c8ddd0;
+}
+
 html {
   scroll-behavior: smooth;
 }

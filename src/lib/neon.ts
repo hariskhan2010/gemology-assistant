@@ -45,6 +45,16 @@ export interface DbNote {
   created_at: string;
 }
 
+export interface DbSavedGem {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string;
+  image: string | null;
+  properties: string | null;
+  created_at: string;
+}
+
 export async function initDatabase() {
   await sql`
     CREATE TABLE IF NOT EXISTS users (
@@ -96,6 +106,18 @@ export async function initDatabase() {
       created_at TEXT NOT NULL
     )
   `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS saved_gems (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      name TEXT NOT NULL,
+      description TEXT DEFAULT '',
+      image TEXT,
+      properties TEXT DEFAULT '{}',
+      created_at TEXT NOT NULL
+    )
+  `;
 }
 
 export async function findUserByEmail(email: string): Promise<DbUser | null> {
@@ -127,6 +149,9 @@ export async function updateUser(filter: Partial<DbUser>, update: any): Promise<
   if (update.password_hash !== undefined) {
     sets.push(`password_hash = '${update.password_hash}'`);
   }
+  if (update.name !== undefined) {
+    sets.push(`name = '${update.name}'`);
+  }
   
   const whereClauses: string[] = [];
   if (filter.email) {
@@ -139,6 +164,12 @@ export async function updateUser(filter: Partial<DbUser>, update: any): Promise<
   if (sets.length > 0) {
     await sql`UPDATE users SET ${sql.unsafe(sets.join(', '))} WHERE ${sql.unsafe(whereClauses.join(' AND '))}`;
   }
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  await sql`DELETE FROM sessions WHERE user_id = ${id}`;
+  await sql`DELETE FROM conversations WHERE user_id = ${id}`;
+  await sql`DELETE FROM users WHERE id = ${id}`;
 }
 
 export async function findUserByResetToken(token: string): Promise<DbUser | null> {
@@ -210,4 +241,19 @@ export async function createNote(note: DbNote): Promise<void> {
 
 export async function deleteNote(id: string): Promise<void> {
   await sql`DELETE FROM notes WHERE id = ${id}`;
+}
+
+export async function createSavedGem(gem: DbSavedGem): Promise<void> {
+  await sql`
+    INSERT INTO saved_gems (id, user_id, name, description, image, properties, created_at)
+    VALUES (${gem.id}, ${gem.user_id}, ${gem.name}, ${gem.description}, ${gem.image || null}, ${gem.properties || null}, ${gem.created_at})
+  `;
+}
+
+export async function getSavedGemsByUserId(user_id: string): Promise<DbSavedGem[]> {
+  return await sql`SELECT * FROM saved_gems WHERE user_id = ${user_id} ORDER BY created_at DESC` as DbSavedGem[];
+}
+
+export async function deleteSavedGem(id: string): Promise<void> {
+  await sql`DELETE FROM saved_gems WHERE id = ${id}`;
 }

@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [{ key: "Service-Worker-Allowed", value: "/" }],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

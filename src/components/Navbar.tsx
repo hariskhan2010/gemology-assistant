@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function Navbar() {
   return (
@@ -19,10 +20,16 @@ export default function Navbar() {
             GemSage
           </span>
         </Link>
-        <div className="flex items-center gap-6">
-          <a href="#features" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-            Features
-          </a>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/gems/encyclopedia" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+              Encyclopedia
+            </Link>
+            <Link href="/gems/compare" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+              Compare
+            </Link>
+          </div>
           <Link href="/assistant" className="text-sm px-4 py-2 rounded-md bg-gemstone-600 text-white shadow-md shadow-gemstone-600/20 hover:bg-gemstone-500 hover:-translate-y-0.5 hover:shadow-lg transition-all">
             Open Assistant
           </Link>
