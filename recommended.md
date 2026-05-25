@@ -34,11 +34,11 @@
 
 | Item | Status | Notes |
 |------|--------|-------|
-| H2 section headings on encyclopedia | 🔲 | Consider "Precious Stones", "Semi-Precious Stones", "Organic Gems" |
-| H2/H3 on compare page | 🔲 | "Compare Properties", property groups |
-| H1 on assistant page | 🔲 | Currently no heading at all on core chat page |
-| Proper H1 on reset-password page | 🔲 | Currently uses H2 as top heading |
-| Meta description rewrite | 🔲 | Current meta description could be more keyword-rich |
+| H2 section headings on encyclopedia | ✅ | "Precious Stones", "Semi-Precious Stones", "Organic Gems" with auto-collapse on search |
+| H2/H3 on compare page | ✅ | H2 subtitle + H3 property group rows (General, Physical, Treatment, Value, Description) |
+| H1 on assistant page | ✅ | Visually-hidden H1 added to layout |
+| Proper H1 on reset-password page | ✅ | All three headings changed from H2 to H1 |
+| Meta description rewrite | ✅ | Updated root layout + OG description |
 | Tutorial/blog articles | 🔲 | Long-term content marketing |
 | Comparison content pages (`/compare/ruby-vs-sapphire`) | 🔲 | Long-term — existing compare tool handles dynamic comparisons |
 
@@ -69,19 +69,9 @@
 
 These are the items still open:
 
-### Low effort
-- Add H1 heading to `/assistant` page (currently missing entirely)
-- Add H2 category headings to `/gems/encyclopedia` page
-- Add property group headings on `/gems/compare` page
-- Update root layout meta description with more keyword-rich copy
-
-### Medium effort
-- Restructure reset-password page to use H1 instead of H2 as top heading
-
 ### Long-term
 - Create tutorial/blog content (e.g., "How to Identify Gemstones with AI", "Gemstone Hardness Comparison Guide")
 - Create dedicated comparison pages (`/compare/ruby-vs-sapphire`, etc.) for search traffic
-- Wire up Save Gem button on encyclopedia detail page ✅ (May 2026)
 
 ---
 
