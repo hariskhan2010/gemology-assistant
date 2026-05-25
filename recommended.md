@@ -47,7 +47,7 @@
 | Item | Status | Notes |
 |------|--------|-------|
 | `next/image` for static logos | ✅ | Navbar, AuthLayout, homepage hero |
-| `next/image` for gallery/saved thumbnails | 🔲 | Left as `<img>` — values can be base64 data URIs (not supported by next/image). Added `loading="lazy"`. |
+| `next/image` for gallery/saved thumbnails | ✅ | Custom component: `next/image` for URLs, `<img>` fallback for data URIs |
 | Install `sharp` | ✅ | `sharp` in dependencies for production image optimization |
 | Image dimensions on all `<img>` | ✅ | Gallery images use `aspect-square` container + `object-contain`. Saved gems use `h-32`. No CLS. |
 

@@ -1,11 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import NextImage from "next/image";
 import { Trash2, Loader2, Gem, ExternalLink, ImageIcon } from "lucide-react";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+
+function SavedGemImage({ src, alt }: { src: string; alt: string }): ReactNode {
+  if (src.startsWith("data:")) {
+    return <img src={src} alt={alt} loading="lazy" className="h-32 w-full object-contain" />;
+  }
+  return (
+    <div className="relative h-32 w-full">
+      <NextImage src={src} alt={alt} fill className="object-contain" unoptimized sizes="(max-width: 768px) 100vw, 33vw" />
+    </div>
+  );
+}
 
 interface SavedGem {
   id: string;
@@ -87,7 +99,7 @@ export default function SavedGemsPage() {
                 </div>
                 {gem.image && (
                   <div className="mb-3 overflow-hidden rounded-lg bg-background">
-                    <img src={gem.image} alt={gem.name} className="h-32 w-full object-contain" />
+                    <SavedGemImage src={gem.image} alt={gem.name} />
                   </div>
                 )}
                 {gem.description && (

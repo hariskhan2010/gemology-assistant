@@ -3,9 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import NextImage from "next/image";
 import { Loader2, ImageIcon, X, ZoomIn } from "lucide-react";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+
+function GalleryImage({ src, alt }: { src: string; alt: string }) {
+  if (src.startsWith("data:")) {
+    return <img src={src} alt={alt} loading="lazy" className="h-full w-full object-contain p-2" />;
+  }
+  return <NextImage src={src} alt={alt} fill className="object-contain p-2" unoptimized sizes="(max-width: 768px) 50vw, 25vw" />;
+}
 
 interface GalleryImage {
   image: string;
@@ -70,7 +78,7 @@ export default function GalleryPage() {
                 onClick={() => setSelected(img)}
                 className="group relative overflow-hidden rounded-xl border border-border bg-surface aspect-square hover:border-gemstone-500/50 transition-all"
               >
-                <img src={img.image} alt={img.title} loading="lazy" className="h-full w-full object-contain p-2" />
+                <GalleryImage src={img.image} alt={img.title} />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-all">
                   <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-all" />
                 </div>
@@ -93,7 +101,11 @@ export default function GalleryPage() {
             >
               <X className="h-5 w-5 text-text-primary" />
             </button>
-            <img src={selected.image} alt={selected.title} className="max-h-[80vh] rounded-xl object-contain" />
+            {selected.image.startsWith("data:") ? (
+              <img src={selected.image} alt={selected.title} className="max-h-[80vh] rounded-xl object-contain" />
+            ) : (
+              <NextImage src={selected.image} alt={selected.title} width={800} height={600} className="max-h-[80vh] w-auto rounded-xl object-contain" unoptimized />
+            )}
             <p className="mt-3 text-center text-sm text-text-secondary">{selected.title}</p>
           </div>
         </div>
