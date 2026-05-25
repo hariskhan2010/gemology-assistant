@@ -1,8 +1,9 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Loader2, Bookmark } from "lucide-react";
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { notFound } from "next/navigation";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -10,8 +11,65 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export default function GemDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const router = useRouter();
   const gem = gemstones.find((g) => g.slug === slug);
   usePageTitle(gem ? `${gem.name} – Properties, Price & Treatments` : "Gem Guide");
+
+  const [isSaved, setIsSaved] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!gem) return;
+    fetch("/api/gems/saved")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.gems) {
+          const found = data.gems.find((g: { name: string; id: string }) => g.name === gem.name);
+          if (found) {
+            setIsSaved(true);
+            setSavedId(found.id);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [gem]);
+
+  const toggleSave = async () => {
+    if (!gem) return;
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (isSaved && savedId) {
+        const res = await fetch("/api/gems/saved", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: savedId }),
+        });
+        if (res.ok) {
+          setIsSaved(false);
+          setSavedId(null);
+        }
+      } else {
+        const res = await fetch("/api/gems/saved", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: gem.name,
+            description: gem.description.slice(0, 200),
+            image: null,
+            properties: [{ hardness: `${gem.mohs} Mohs` }, { color: gem.color }, { crystal: gem.crystal }],
+          }),
+        });
+        const data = await res.json();
+        if (data.gem) {
+          setIsSaved(true);
+          setSavedId(data.gem.id);
+        }
+      }
+    } catch {}
+    setSaving(false);
+  };
 
   if (!gem) notFound();
 
@@ -114,8 +172,21 @@ export default function GemDetailPage() {
             <div className="rounded-xl border border-border bg-surface p-6">
               <h2 className="mb-3 font-heading text-lg font-semibold text-text-primary">Save to Collection</h2>
               <p className="mb-3 text-xs text-text-muted">Bookmark this gem to reference later</p>
-              <button className="w-full rounded-lg bg-gemstone-600 py-2 text-sm font-medium text-white hover:bg-gemstone-500 transition-colors">
-                Save Gem
+              <button
+                onClick={toggleSave}
+                disabled={saving}
+                className={`w-full rounded-lg py-2 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                  isSaved
+                    ? "bg-gemstone-600/20 text-gemstone-400 hover:bg-gemstone-600/30"
+                    : "bg-gemstone-600 text-white hover:bg-gemstone-500"
+                }`}
+              >
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Bookmark className={`h-4 w-4 ${isSaved ? "fill-gemstone-400" : ""}`} />
+                )}
+                {isSaved ? "Saved" : "Save Gem"}
               </button>
             </div>
           </div>
