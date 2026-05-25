@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
             <Lock className="h-8 w-8" />
           </div>
           <div>
-            <h2 className="font-heading text-3xl font-bold text-text-primary">Invalid Link</h2>
+            <h1 className="font-heading text-3xl font-bold text-text-primary">Invalid Link</h1>
             <p className="mt-2 text-sm text-text-secondary">
               This password reset link is invalid or has expired.
             </p>
@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
             <CheckCircle className="h-8 w-8" />
           </div>
           <div>
-            <h2 className="font-heading text-3xl font-bold text-text-primary">Password Reset</h2>
+            <h1 className="font-heading text-3xl font-bold text-text-primary">Password Reset</h1>
             <p className="mt-2 text-sm text-text-secondary">
               Your password has been successfully reset.
             </p>
@@ -117,7 +117,7 @@ export default function ResetPasswordPage() {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Sign In
           </Link>
-          <h2 className="font-heading text-3xl font-bold text-text-primary">Reset password</h2>
+          <h1 className="font-heading text-3xl font-bold text-text-primary">Reset password</h1>
           <p className="mt-2 text-sm text-text-secondary">Enter your new password below</p>
         </div>
 

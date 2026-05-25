@@ -1,23 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { X, Plus } from "lucide-react";
 import { gemstones, type GemstoneData } from "@/lib/knowledge/gemstones";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
-const fields: { key: keyof GemstoneData; label: string }[] = [
-  { key: "category", label: "Category" },
-  { key: "color", label: "Color" },
-  { key: "mohs", label: "Mohs Hardness" },
-  { key: "ri", label: "Refractive Index" },
-  { key: "sg", label: "Specific Gravity" },
-  { key: "crystal", label: "Crystal System" },
-  { key: "treatments", label: "Treatments" },
-  { key: "origins", label: "Origins" },
-  { key: "priceRange", label: "Price Range" },
-  { key: "description", label: "Description" },
+const groups: { label: string; fields: { key: keyof GemstoneData; label: string }[] }[] = [
+  {
+    label: "General",
+    fields: [
+      { key: "category", label: "Category" },
+      { key: "color", label: "Color" },
+    ],
+  },
+  {
+    label: "Physical Properties",
+    fields: [
+      { key: "mohs", label: "Mohs Hardness" },
+      { key: "ri", label: "Refractive Index" },
+      { key: "sg", label: "Specific Gravity" },
+      { key: "crystal", label: "Crystal System" },
+    ],
+  },
+  {
+    label: "Treatment & Origin",
+    fields: [
+      { key: "treatments", label: "Treatments" },
+      { key: "origins", label: "Origins" },
+    ],
+  },
+  {
+    label: "Value",
+    fields: [
+      { key: "priceRange", label: "Price Range" },
+    ],
+  },
+  {
+    label: "Description",
+    fields: [
+      { key: "description", label: "Description" },
+    ],
+  },
 ];
 
 export default function ComparePage() {
@@ -53,7 +78,7 @@ export default function ComparePage() {
 
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold text-text-primary">Gem Comparison</h1>
-          <p className="mt-1 text-sm text-text-secondary">Compare gemstones side by side</p>
+          <h2 className="mt-1 text-sm text-text-secondary font-normal">Compare Properties — add up to 4 gemstones to see them side by side</h2>
         </div>
 
         <div className="mb-6">
@@ -96,21 +121,30 @@ export default function ComparePage() {
                 </tr>
               </thead>
               <tbody>
-                {fields.map((field) => (
-                  <tr key={field.key} className="border-b border-border last:border-0">
-                    <td className="sticky left-0 bg-background px-4 py-3 text-xs font-medium text-text-muted">{field.label}</td>
-                    {selected.map((gem) => (
-                      <td key={gem.slug} className="px-4 py-3 text-text-primary">
-                        {field.key === "description" ? (
-                          <p className="line-clamp-3 text-xs leading-relaxed">{formatValue(gem, field.key)}</p>
-                        ) : (
-                          <span className={field.key === "priceRange" ? "text-gemstone-400 text-xs" : "text-xs"}>
-                            {formatValue(gem, field.key)}
-                          </span>
-                        )}
+                {groups.map((group) => (
+                  <React.Fragment key={group.label}>
+                    <tr className="border-b border-border bg-surface-elevated/50">
+                      <td className="sticky left-0 bg-surface-elevated/50 px-4 py-2" colSpan={selected.length + 1}>
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted">{group.label}</h3>
                       </td>
+                    </tr>
+                    {group.fields.map((field) => (
+                      <tr key={field.key} className="border-b border-border last:border-0">
+                        <td className="sticky left-0 bg-background px-4 py-3 text-xs font-medium text-text-muted">{field.label}</td>
+                        {selected.map((gem) => (
+                          <td key={gem.slug} className="px-4 py-3 text-text-primary">
+                            {field.key === "description" ? (
+                              <p className="line-clamp-3 text-xs leading-relaxed">{formatValue(gem, field.key)}</p>
+                            ) : (
+                              <span className={field.key === "priceRange" ? "text-gemstone-400 text-xs" : "text-xs"}>
+                                {formatValue(gem, field.key)}
+                              </span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
-                  </tr>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

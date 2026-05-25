@@ -28,6 +28,7 @@ export default function AssistantLayout() {
               <Headphones className="h-5 w-5" />
             </button>
           </header>
+          <h1 className="sr-only">AI Gemologist Assistant</h1>
           <ChatArea />
           <ChatInput onCameraTalkOpen={() => setCameraTalkOpen(true)} />
         </div>

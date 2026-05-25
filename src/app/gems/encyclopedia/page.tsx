@@ -19,6 +19,19 @@ export default function EncyclopediaPage() {
     return matchSearch && matchCategory;
   });
 
+  const isFlat = search.length > 0 || category !== "All";
+  const categoryDisplay: Record<string, string> = {
+    "Precious": "Precious Stones",
+    "Semi-Precious": "Semi-Precious Stones",
+    "Organic": "Organic Gems",
+  };
+
+  const grouped = isFlat
+    ? null
+    : Object.fromEntries(
+        categories.map((cat) => [cat, filtered.filter((g) => g.category === cat)])
+      );
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12">
@@ -60,32 +73,68 @@ export default function EncyclopediaPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((gem) => (
-            <Link
-              key={gem.slug}
-              href={`/gems/encyclopedia/${gem.slug}`}
-              className="group rounded-xl border border-border bg-surface p-5 hover:border-gemstone-500/50 transition-all hover:-translate-y-0.5"
-            >
-              <div className="mb-3 flex items-start justify-between">
-                <h3 className="font-semibold text-text-primary group-hover:text-gemstone-400 transition-colors">{gem.name}</h3>
-                <span className="rounded bg-surface-elevated px-2 py-0.5 text-xs text-text-muted">{gem.category}</span>
+        {isFlat ? (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((gem) => (
+                <Link
+                  key={gem.slug}
+                  href={`/gems/encyclopedia/${gem.slug}`}
+                  className="group rounded-xl border border-border bg-surface p-5 hover:border-gemstone-500/50 transition-all hover:-translate-y-0.5"
+                >
+                  <div className="mb-3 flex items-start justify-between">
+                    <h3 className="font-semibold text-text-primary group-hover:text-gemstone-400 transition-colors">{gem.name}</h3>
+                    <span className="rounded bg-surface-elevated px-2 py-0.5 text-xs text-text-muted">{gem.category}</span>
+                  </div>
+                  <p className="mb-3 text-sm text-text-secondary line-clamp-3">{gem.description}</p>
+                  <div className="flex flex-wrap gap-2 text-xs text-text-muted">
+                    <span className="rounded bg-gemstone-600/10 px-2 py-0.5">{gem.mohs} Mohs</span>
+                    <span className="rounded bg-gemstone-600/10 px-2 py-0.5">RI {gem.ri}</span>
+                    <span className="rounded bg-gemstone-600/10 px-2 py-0.5">{gem.crystal}</span>
+                  </div>
+                  <p className="mt-3 text-xs text-gemstone-400">{gem.color.split(",")[0].trim()}{gem.color.includes(",") ? " + more" : ""}</p>
+                </Link>
+              ))}
+            </div>
+            {filtered.length === 0 && (
+              <div className="flex flex-col items-center py-16">
+                <Gem className="mb-4 h-12 w-12 text-text-muted" />
+                <p className="text-text-muted">No gemstones found</p>
               </div>
-              <p className="mb-3 text-sm text-text-secondary line-clamp-3">{gem.description}</p>
-              <div className="flex flex-wrap gap-2 text-xs text-text-muted">
-                <span className="rounded bg-gemstone-600/10 px-2 py-0.5">{gem.mohs} Mohs</span>
-                <span className="rounded bg-gemstone-600/10 px-2 py-0.5">RI {gem.ri}</span>
-                <span className="rounded bg-gemstone-600/10 px-2 py-0.5">{gem.crystal}</span>
-              </div>
-              <p className="mt-3 text-xs text-gemstone-400">{gem.color.split(",")[0].trim()}{gem.color.includes(",") ? " + more" : ""}</p>
-            </Link>
-          ))}
-        </div>
-
-        {filtered.length === 0 && (
-          <div className="flex flex-col items-center py-16">
-            <Gem className="mb-4 h-12 w-12 text-text-muted" />
-            <p className="text-text-muted">No gemstones found</p>
+            )}
+          </>
+        ) : (
+          <div className="space-y-12">
+            {categories.map((cat) => {
+              const gems = grouped![cat];
+              if (!gems || gems.length === 0) return null;
+              return (
+                <section key={cat}>
+                  <h2 className="font-heading text-2xl font-bold text-text-primary mb-6 border-b border-border pb-2">{categoryDisplay[cat] || cat}</h2>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {gems.map((gem) => (
+                      <Link
+                        key={gem.slug}
+                        href={`/gems/encyclopedia/${gem.slug}`}
+                        className="group rounded-xl border border-border bg-surface p-5 hover:border-gemstone-500/50 transition-all hover:-translate-y-0.5"
+                      >
+                        <div className="mb-3 flex items-start justify-between">
+                          <h3 className="font-semibold text-text-primary group-hover:text-gemstone-400 transition-colors">{gem.name}</h3>
+                          <span className="rounded bg-surface-elevated px-2 py-0.5 text-xs text-text-muted">{gem.category}</span>
+                        </div>
+                        <p className="mb-3 text-sm text-text-secondary line-clamp-3">{gem.description}</p>
+                        <div className="flex flex-wrap gap-2 text-xs text-text-muted">
+                          <span className="rounded bg-gemstone-600/10 px-2 py-0.5">{gem.mohs} Mohs</span>
+                          <span className="rounded bg-gemstone-600/10 px-2 py-0.5">RI {gem.ri}</span>
+                          <span className="rounded bg-gemstone-600/10 px-2 py-0.5">{gem.crystal}</span>
+                        </div>
+                        <p className="mt-3 text-xs text-gemstone-400">{gem.color.split(",")[0].trim()}{gem.color.includes(",") ? " + more" : ""}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
           </div>
         )}
       </div>
