@@ -24,6 +24,9 @@ export default function Navbar() {
         </Link>
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">
+            <Link href="/" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+              Home
+            </Link>
             <Link href="/gems/encyclopedia" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
               Encyclopedia
             </Link>
