@@ -17,7 +17,7 @@
 | Unique title tags per page | ✅ | `usePageTitle` hook on 12 client pages (encyclopedia list, detail, compare, gallery, saved, profile, signin, signup, assistant, etc.) |
 | OG image (1200×630) | ✅ | `/public/og-image.svg` — green gem theme, configured in root layout |
 | Unblock crawler paths | ✅ | `robots.txt` allows `/assistant/` and `/auth/` |
-| Expand sitemap | ✅ | 37 URLs including all gem detail pages, static routes, auth pages |
+| Expand sitemap | ✅ | 47 URLs including blog articles, comparison pages, gem detail pages, static routes |
 | Twitter Card metadata | ✅ | `summary_large_image` in root layout |
 | Complete OG metadata (url, site_name, image dimensions) | ✅ | Added to root layout metadata |
 
@@ -27,8 +27,8 @@
 |--------|------|--------|-------|
 | SoftwareApplication | Homepage (`/`) | ✅ | Inside a `<script type="application/ld+json">` block |
 | Product | Each gem detail page (`/gems/encyclopedia/[slug]`) | ✅ | Name, category, description, material, brand |
-| ItemList | Encyclopedia list | 🔲 | Low priority — list pages seldom get rich results |
-| BreadcrumbList | All sub-pages | 🔲 | Breadcrumb component exists but lacks JSON-LD schema; Google can infer breadcrumbs from HTML structure |
+| ItemList | Encyclopedia list | ✅ | 25 gemstones as list items with names, URLs, descriptions |
+| BreadcrumbList | All sub-pages | ✅ | Injected by Breadcrumbs component automatically on every page |
 
 ## 3. Content & Headings
 

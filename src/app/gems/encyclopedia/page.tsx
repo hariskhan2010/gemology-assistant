@@ -7,6 +7,8 @@ import { gemstones, categories } from "@/lib/knowledge/gemstones";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
+const BASE = "https://gemology-assistant.vercel.app";
+
 export default function EncyclopediaPage() {
   usePageTitle("Gemstone Encyclopedia");
   const [search, setSearch] = useState("");
@@ -33,6 +35,26 @@ export default function EncyclopediaPage() {
       );
 
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "Gemstone Encyclopedia",
+            description: "Browse 25 gemstones with properties, prices, and treatments",
+            url: `${BASE}/gems/encyclopedia`,
+            itemListElement: gemstones.map((g, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: g.name,
+              url: `${BASE}/gems/encyclopedia/${g.slug}`,
+              description: g.description.slice(0, 160),
+            })),
+          }),
+        }}
+      />
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <Breadcrumbs items={[
@@ -139,5 +161,6 @@ export default function EncyclopediaPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
