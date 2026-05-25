@@ -8,8 +8,10 @@ import { ChatArea } from "@/components/chat/ChatArea";
 import { VoiceMode } from "@/components/chat/voice/VoiceMode";
 import { CameraTalk } from "@/components/chat/CameraTalk";
 import { ChatProvider } from "@/lib/chat-context";
+import { usePageTitle } from "@/hooks/use-page-title";
 
 export default function AssistantLayout() {
+  usePageTitle("AI Gemologist Assistant");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
   const [cameraTalkOpen, setCameraTalkOpen] = useState(false);

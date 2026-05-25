@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://gemology-assistant.vercel.app",
     siteName: "GemSage",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "GemSage - AI Gemology Assistant",
     description: "Identify gems, learn properties, and master faceting with AI.",
-    images: ["/og-image.png"],
+    images: ["/og-image.svg"],
   },
   robots: {
     index: true,
@@ -51,8 +51,6 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   other: {
     "theme-color": "#059669",
-    "og:image:width": "1200",
-    "og:image:height": "630",
   },
 };
 
