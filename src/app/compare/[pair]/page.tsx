@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Columns3 } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { comparisons } from "@/lib/knowledge/comparisons";
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { notFound } from "next/navigation";
@@ -34,6 +35,7 @@ export default function ComparisonPage() {
         }}
       />
       <div className="min-h-screen bg-background">
+        <Navbar />
         <div className="mx-auto max-w-4xl px-4 py-12">
           <Breadcrumbs items={[
             { label: "Home", href: "/" },

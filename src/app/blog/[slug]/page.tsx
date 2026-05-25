@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Tag, BookOpen } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { blogArticles } from "@/lib/knowledge/blog";
 import { notFound } from "next/navigation";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -87,6 +88,7 @@ export default function BlogArticlePage() {
         }}
       />
       <div className="min-h-screen bg-background">
+        <Navbar />
         <div className="mx-auto max-w-4xl px-4 py-12">
           <Breadcrumbs items={[
             { label: "Home", href: "/" },

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NextImage from "next/image";
 import { Trash2, Loader2, Gem, ExternalLink, ImageIcon } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
@@ -64,6 +65,7 @@ export default function SavedGemsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="mx-auto max-w-4xl px-4 py-12">
         <Breadcrumbs items={[
           { label: "Home", href: "/" },

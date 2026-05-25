@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { BookOpen, Clock, Tag } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { blogArticles } from "@/lib/knowledge/blog";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -11,6 +12,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="mx-auto max-w-4xl px-4 py-12">
         <Breadcrumbs items={[
           { label: "Home", href: "/" },

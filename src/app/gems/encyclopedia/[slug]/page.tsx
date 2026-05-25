@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, Loader2, Bookmark } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { notFound } from "next/navigation";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -90,6 +91,7 @@ export default function GemDetailPage() {
         }}
       />
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="mx-auto max-w-4xl px-4 py-12">
         <Breadcrumbs items={[
           { label: "Home", href: "/" },

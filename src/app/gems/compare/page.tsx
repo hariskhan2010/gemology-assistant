@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { X, Plus } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { gemstones, type GemstoneData } from "@/lib/knowledge/gemstones";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -70,6 +71,7 @@ export default function ComparePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <Breadcrumbs items={[
           { label: "Home", href: "/" },

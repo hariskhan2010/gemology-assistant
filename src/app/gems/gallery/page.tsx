@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NextImage from "next/image";
 import { Loader2, ImageIcon, X, ZoomIn } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
@@ -50,6 +51,7 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <Breadcrumbs items={[
           { label: "Home", href: "/" },
