@@ -1,14 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import SignInPage from "./PageContent";
 
-import AuthLayout from "@/components/auth/AuthLayout";
-import { SignInForm } from "@/components/auth/SignInForm";
-import { usePageTitle } from "@/hooks/use-page-title";
+export const metadata: Metadata = {
+  title: "Sign In",
+  description: "Sign in to GemSage to access AI gem identification, faceting guidance, and your saved gem collection.",
+  openGraph: { title: "Sign In | GemSage", description: "Sign in to GemSage for AI-powered gemology assistance." },
+};
 
-export default function SignInPage() {
-  usePageTitle("Sign In");
-  return (
-    <AuthLayout>
-      <SignInForm />
-    </AuthLayout>
-  );
+export default function Page() {
+  return <SignInPage />;
 }

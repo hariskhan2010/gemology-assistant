@@ -1,14 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import SignUpPage from "./PageContent";
 
-import AuthLayout from "@/components/auth/AuthLayout";
-import SignUpForm from "@/components/auth/SignUpForm";
-import { usePageTitle } from "@/hooks/use-page-title";
+export const metadata: Metadata = {
+  title: "Sign Up",
+  description: "Create a free GemSage account for AI gemstone identification, faceting guides, and your personal gem collection.",
+  openGraph: { title: "Sign Up | GemSage", description: "Create a free GemSage account for AI-powered gemology." },
+};
 
-export default function SignUpPage() {
-  usePageTitle("Sign Up");
-  return (
-    <AuthLayout>
-      <SignUpForm />
-    </AuthLayout>
-  );
+export default function Page() {
+  return <SignUpPage />;
 }

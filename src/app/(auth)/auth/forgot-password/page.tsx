@@ -1,14 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import ForgotPasswordPage from "./PageContent";
 
-import AuthLayout from "@/components/auth/AuthLayout";
-import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
-import { usePageTitle } from "@/hooks/use-page-title";
+export const metadata: Metadata = {
+  title: "Forgot Password",
+  description: "Reset your GemSage account password. Enter your email to receive a password reset link.",
+  openGraph: { title: "Forgot Password | GemSage", description: "Reset your GemSage account password." },
+};
 
-export default function ForgotPasswordPage() {
-  usePageTitle("Forgot Password");
-  return (
-    <AuthLayout>
-      <ForgotPasswordForm />
-    </AuthLayout>
-  );
+export default function Page() {
+  return <ForgotPasswordPage />;
 }

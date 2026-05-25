@@ -22,6 +22,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://gemology-assistant.vercel.app"),
   title: {
     default: "GemSage - AI Gemology Assistant",
     template: "%s | GemSage",
@@ -36,13 +37,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://gemology-assistant.vercel.app",
     siteName: "GemSage",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "GemSage - AI Gemology Assistant",
     description: "Identify gems, learn properties, and master faceting with AI.",
-    images: ["/og-image.svg"],
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
