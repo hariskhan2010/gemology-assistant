@@ -17,7 +17,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           <div className="animate-fade-in flex flex-col items-center gap-6">
             <div className="animate-gem-rotate">
               <Image
-                src="/gem_logo.png"
+                src="/gem_logo.webp"
                 alt="GemSage Gemstone"
                 width={96}
                 height={96}

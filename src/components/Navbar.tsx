@@ -9,7 +9,7 @@ export default function Navbar() {
           <div className="perspective-1000">
             <div className="animate-gem-rotate preserve-3d">
               <Image
-                src="/gem_logo.png"
+                src="/gem_logo.webp"
                 alt="GemSage Logo"
                 width={40}
                 height={40}

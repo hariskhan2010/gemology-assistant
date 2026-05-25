@@ -108,7 +108,7 @@ export default function Home() {
               <div className="relative flex items-center justify-center perspective-1000">
                 <div className="animate-gem-rotate preserve-3d">
                   <NextImage
-                    src="/gem_logo.png"
+                    src="/gem_logo.webp"
                     alt="GemSage Gemstone"
                     width={320}
                     height={320}
