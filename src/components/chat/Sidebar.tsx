@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, Plus, Search, Settings, LogOut, Gem, User, Headphones } from "lucide-react";
 import { useChat } from "@/lib/chat-context";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -62,7 +61,6 @@ export function Sidebar({ isOpen, onClose, onVoiceMode }: SidebarProps) {
             <span className="font-heading text-lg font-bold text-text-primary">GemSage</span>
           </Link>
           <div className="flex items-center gap-1">
-            <ThemeToggle />
             <button onClick={onClose} className="lg:hidden text-text-muted hover:text-text-primary">
               <Menu className="h-5 w-5" />
             </button>

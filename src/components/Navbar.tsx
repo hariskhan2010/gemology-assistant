@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function Navbar() {
   return (
@@ -24,7 +23,6 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
-          <ThemeToggle />
           <div className="hidden md:flex items-center gap-4">
             <Link href="/gems/encyclopedia" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
               Encyclopedia
