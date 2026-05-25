@@ -39,17 +39,17 @@
 | H1 on assistant page | ✅ | Visually-hidden H1 added to layout |
 | Proper H1 on reset-password page | ✅ | All three headings changed from H2 to H1 |
 | Meta description rewrite | ✅ | Updated root layout + OG description |
-| Tutorial/blog articles | 🔲 | Long-term content marketing |
-| Comparison content pages (`/compare/ruby-vs-sapphire`) | 🔲 | Long-term — existing compare tool handles dynamic comparisons |
+| Tutorial/blog articles | ✅ | 5 articles at `/blog/` with listing + detail pages, JSON-LD Article schema |
+| Comparison content pages (`/compare/ruby-vs-sapphire`) | ✅ | 5 dedicated comparison pages at `/compare/[pair]` with detailed tables + verdicts; linked from compare tool |
 
 ## 4. Performance & Images
 
 | Item | Status | Notes |
 |------|--------|-------|
 | `next/image` for static logos | ✅ | Navbar, AuthLayout, homepage hero |
-| `next/image` for gallery/saved thumbnails | 🔲 | Left as `<img>` because values can be base64 data URIs (not supported by next/image) |
+| `next/image` for gallery/saved thumbnails | 🔲 | Left as `<img>` — values can be base64 data URIs (not supported by next/image). Added `loading="lazy"`. |
 | Install `sharp` | ✅ | `sharp` in dependencies for production image optimization |
-| Image dimensions on all `<img>` | 🔲 | Dynamic/gallery images don't have fixed dimensions |
+| Image dimensions on all `<img>` | ✅ | Gallery images use `aspect-square` container + `object-contain`. Saved gems use `h-32`. No CLS. |
 
 ## 5. Internal Linking & Navigation
 
@@ -69,9 +69,7 @@
 
 These are the items still open:
 
-### Long-term
-- Create tutorial/blog content (e.g., "How to Identify Gemstones with AI", "Gemstone Hardness Comparison Guide")
-- Create dedicated comparison pages (`/compare/ruby-vs-sapphire`, etc.) for search traffic
+### All items complete
 
 ---
 

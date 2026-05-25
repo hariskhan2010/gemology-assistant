@@ -81,6 +81,25 @@ export default function ComparePage() {
           <h2 className="mt-1 text-sm text-text-secondary font-normal">Compare Properties — add up to 4 gemstones to see them side by side</h2>
         </div>
 
+        <div className="mb-6 flex flex-wrap gap-2">
+          <span className="text-xs text-text-muted self-center mr-1">Popular:</span>
+          <Link href="/compare/ruby-vs-sapphire" className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary hover:border-gemstone-500/50 hover:text-gemstone-400 transition-colors">
+            Ruby vs Sapphire
+          </Link>
+          <Link href="/compare/diamond-vs-moissanite" className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary hover:border-gemstone-500/50 hover:text-gemstone-400 transition-colors">
+            Diamond vs Moissanite
+          </Link>
+          <Link href="/compare/emerald-vs-peridot" className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary hover:border-gemstone-500/50 hover:text-gemstone-400 transition-colors">
+            Emerald vs Peridot
+          </Link>
+          <Link href="/compare/ruby-vs-garnet" className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary hover:border-gemstone-500/50 hover:text-gemstone-400 transition-colors">
+            Ruby vs Garnet
+          </Link>
+          <Link href="/compare/diamond-vs-cubic-zirconia" className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary hover:border-gemstone-500/50 hover:text-gemstone-400 transition-colors">
+            Diamond vs CZ
+          </Link>
+        </div>
+
         <div className="mb-6">
           {selected.length < 4 && (
             <div className="relative">

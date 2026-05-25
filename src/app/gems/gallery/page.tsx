@@ -70,7 +70,7 @@ export default function GalleryPage() {
                 onClick={() => setSelected(img)}
                 className="group relative overflow-hidden rounded-xl border border-border bg-surface aspect-square hover:border-gemstone-500/50 transition-all"
               >
-                <img src={img.image} alt={img.title} className="h-full w-full object-contain p-2" />
+                <img src={img.image} alt={img.title} loading="lazy" className="h-full w-full object-contain p-2" />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-all">
                   <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-all" />
                 </div>

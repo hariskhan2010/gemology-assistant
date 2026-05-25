@@ -32,6 +32,9 @@ export default function Navbar() {
             <Link href="/gems/compare" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
               Compare
             </Link>
+            <Link href="/blog" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+              Blog
+            </Link>
           </div>
           <Link href="/assistant" className="text-sm px-4 py-2 rounded-md bg-gemstone-600 text-white shadow-md shadow-gemstone-600/20 hover:bg-gemstone-500 hover:-translate-y-0.5 hover:shadow-lg transition-all">
             Open Assistant
