@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Gem } from "lucide-react";
 
 interface AuthLayoutProps {
@@ -15,10 +16,12 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center z-10">
           <div className="animate-fade-in flex flex-col items-center gap-6">
             <div className="animate-gem-rotate">
-              <img
+              <Image
                 src="/gem_logo.png"
                 alt="GemSage Gemstone"
-                className="h-24 w-24 object-contain"
+                width={96}
+                height={96}
+                className="object-contain"
                 style={{ filter: "drop-shadow(0 0 30px rgba(16, 185, 129, 0.5))" }}
               />
             </div>

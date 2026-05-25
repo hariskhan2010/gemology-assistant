@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function Navbar() {
@@ -8,10 +9,12 @@ export default function Navbar() {
         <Link href="/" className="group flex items-center gap-2 text-xl font-bold font-heading" aria-label="GemSage Home">
           <div className="perspective-1000">
             <div className="animate-gem-rotate preserve-3d">
-              <img
+              <Image
                 src="/gem_logo.png"
                 alt="GemSage Logo"
-                className="h-10 w-10 object-contain"
+                width={40}
+                height={40}
+                className="object-contain"
                 style={{ filter: "drop-shadow(0 0 10px rgba(16, 185, 129, 0.6))" }}
               />
             </div>

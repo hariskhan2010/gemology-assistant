@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Mail, Calendar, ArrowLeft, Save, Trash2, Loader2, Eye, EyeOff, KeyRound } from "lucide-react";
+import { User, Mail, Calendar, Save, Trash2, Loader2, Eye, EyeOff, KeyRound } from "lucide-react";
 import Link from "next/link";
 import { usePageTitle } from "@/hooks/use-page-title";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 interface ProfileData {
   id: string;
@@ -125,10 +126,10 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-2xl px-4 py-12">
-        <Link href="/assistant" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-gemstone-400 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Assistant
-        </Link>
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: "Profile" },
+        ]} />
 
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold text-text-primary">Profile</h1>

@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, ImageIcon, X, ZoomIn } from "lucide-react";
+import { Loader2, ImageIcon, X, ZoomIn } from "lucide-react";
 import { usePageTitle } from "@/hooks/use-page-title";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 interface GalleryImage {
   image: string;
@@ -42,10 +43,10 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <Link href="/assistant" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-gemstone-400 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Assistant
-        </Link>
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: "Image Gallery" },
+        ]} />
 
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold text-text-primary">Image History</h1>

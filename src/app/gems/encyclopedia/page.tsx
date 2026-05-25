@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Search, Gem } from "lucide-react";
+import { Search, Gem } from "lucide-react";
 import { gemstones, categories } from "@/lib/knowledge/gemstones";
 import { usePageTitle } from "@/hooks/use-page-title";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export default function EncyclopediaPage() {
   usePageTitle("Gemstone Encyclopedia");
@@ -21,10 +22,10 @@ export default function EncyclopediaPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <Link href="/" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-gemstone-400 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: "Encyclopedia" },
+        ]} />
 
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold text-text-primary">Gemstone Encyclopedia</h1>

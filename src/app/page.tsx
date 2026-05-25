@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import NextImage from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Search, Camera, BookOpen, Sparkles, Shield, Zap, Library, Columns3, Bookmark, Image, User } from "lucide-react";
+import { Search, Camera, BookOpen, Sparkles, Shield, Zap, Library, Columns3, Bookmark, ImageIcon, User } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -49,7 +50,7 @@ const features = [
     href: "/gems/saved",
   },
   {
-    icon: Image,
+    icon: ImageIcon,
     title: "Image History",
     description: "Browse all previously uploaded gem photos in one place with full-size preview.",
     badge: "Gallery",
@@ -106,10 +107,12 @@ export default function Home() {
             <div className="mt-16 flex justify-center">
               <div className="relative flex items-center justify-center perspective-1000">
                 <div className="animate-gem-rotate preserve-3d">
-                  <img
+                  <NextImage
                     src="/gem_logo.png"
                     alt="GemSage Gemstone"
-                    className="h-64 w-64 sm:h-72 sm:w-72 lg:h-80 lg:w-80 object-contain"
+                    width={320}
+                    height={320}
+                    className="object-contain"
                     style={{ filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
                   />
                 </div>

@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Trash2, Loader2, Gem, ExternalLink, ImageIcon } from "lucide-react";
+import { Trash2, Loader2, Gem, ExternalLink, ImageIcon } from "lucide-react";
 import { usePageTitle } from "@/hooks/use-page-title";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 interface SavedGem {
   id: string;
@@ -52,10 +53,10 @@ export default function SavedGemsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 py-12">
-        <Link href="/assistant" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-gemstone-400 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Assistant
-        </Link>
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: "Saved Gems" },
+        ]} />
 
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold text-text-primary">Saved Gems</h1>

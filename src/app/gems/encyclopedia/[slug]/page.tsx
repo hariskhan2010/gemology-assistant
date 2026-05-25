@@ -2,10 +2,11 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { notFound } from "next/navigation";
 import { usePageTitle } from "@/hooks/use-page-title";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export default function GemDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -32,10 +33,11 @@ export default function GemDetailPage() {
       />
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 py-12">
-        <Link href="/gems/encyclopedia" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-gemstone-400 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Encyclopedia
-        </Link>
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: "Encyclopedia", href: "/gems/encyclopedia" },
+          { label: gem.name },
+        ]} />
 
         <div className="mb-8">
           <div className="flex items-start justify-between">
@@ -116,6 +118,34 @@ export default function GemDetailPage() {
                 Save Gem
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Similar Gems */}
+        <div className="mt-12">
+          <h2 className="mb-4 font-heading text-xl font-semibold text-text-primary">Similar Gems</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {gemstones
+              .filter((g) => g.category === gem.category && g.slug !== gem.slug)
+              .slice(0, 3)
+              .map((similar) => (
+                <Link
+                  key={similar.slug}
+                  href={`/gems/encyclopedia/${similar.slug}`}
+                  className="rounded-xl border border-border bg-surface p-4 hover:border-gemstone-500/50 hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-text-primary hover:text-gemstone-400 transition-colors">{similar.name}</h3>
+                    <Link
+                      href={`/gems/compare?add=${similar.slug}`}
+                      className="text-xs text-gemstone-400 hover:text-gemstone-300 transition-colors"
+                    >
+                      Compare
+                    </Link>
+                  </div>
+                  <p className="mt-1 text-xs text-text-muted">{similar.mohs} Mohs · {similar.category}</p>
+                </Link>
+              ))}
           </div>
         </div>
       </div>
