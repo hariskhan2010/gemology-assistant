@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); transform-origin: 16px 16px; }
+      to { transform: rotate(360deg); transform-origin: 16px 16px; }
+    }
+    .gem { animation: spin 3s linear infinite; }
+  </style>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+  <g class="gem">
+    <polygon points="16,2 28,12 16,30 4,12" fill="url(#g)" stroke="#34d399" stroke-width="1"/>
+    <polygon points="16,10 28,12 16,30 4,12" fill="rgba(255,255,255,0.15)"/>
+    <polygon points="16,2 28,12 16,10" fill="rgba(255,255,255,0.25)"/>
+  </g>
+</svg>

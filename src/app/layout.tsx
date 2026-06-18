@@ -45,6 +45,10 @@ export const metadata: Metadata = {
     description: "Identify gems, learn properties, and master faceting with AI.",
     images: ["/og-image.png"],
   },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/gem_logo.png",
+  },
   robots: {
     index: true,
     follow: true,
