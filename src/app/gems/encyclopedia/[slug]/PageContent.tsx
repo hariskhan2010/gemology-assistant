@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink, Loader2, Bookmark } from "lucide-react";
+import { Loader2, Bookmark } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { notFound } from "next/navigation";
@@ -209,12 +209,6 @@ export default function GemDetailPage() {
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-text-primary hover:text-gemstone-400 transition-colors">{similar.name}</h3>
-                    <Link
-                      href={`/gems/compare?add=${similar.slug}`}
-                      className="text-xs text-gemstone-400 hover:text-gemstone-300 transition-colors"
-                    >
-                      Compare
-                    </Link>
                   </div>
                   <p className="mt-1 text-xs text-text-muted">{similar.mohs} Mohs · {similar.category}</p>
                 </Link>
