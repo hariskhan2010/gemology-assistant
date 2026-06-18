@@ -7,7 +7,7 @@ import { ChatInput } from "@/components/chat/ChatInput";
 import { CameraTalk } from "@/components/chat/CameraTalk";
 
 export function ChatArea() {
-  const { activeConversation, isLoading, error, retryLastMessage } = useChat();
+  const { activeConversation, isLoading, error, sendMessage, retryLastMessage } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
   const [isCameraTalkOpen, setIsCameraTalkOpen] = useState(false);
 
@@ -37,7 +37,8 @@ export function ChatArea() {
             ].map((suggestion) => (
               <button
                 key={suggestion}
-                className="rounded-lg border border-border bg-surface px-4 py-3 text-left text-sm text-text-secondary hover:border-gemstone-500 hover:text-text-primary transition-all"
+                onClick={() => sendMessage(suggestion)}
+                className="rounded-lg border border-border bg-surface px-4 py-3 text-left text-sm text-text-secondary hover:border-gemstone-500 hover:text-text-primary transition-all cursor-pointer"
               >
                 {suggestion}
               </button>
