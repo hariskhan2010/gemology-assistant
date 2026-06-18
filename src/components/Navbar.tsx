@@ -6,15 +6,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md shadow-lg shadow-gemstone-900/20" role="banner">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <Link href="/" className="group flex items-center gap-2 text-xl font-bold font-heading" aria-label="GemSage Home">
-          <div className="perspective-1000">
+            <div className="perspective-1000">
             <div className="animate-gem-rotate preserve-3d">
               <Image
                 src="/gem_logo.webp"
                 alt="GemSage Logo"
                 width={40}
                 height={40}
-                className="object-contain"
-                style={{ filter: "drop-shadow(0 0 10px rgba(16, 185, 129, 0.6))" }}
+                className="object-contain logo-glow"
               />
             </div>
           </div>
