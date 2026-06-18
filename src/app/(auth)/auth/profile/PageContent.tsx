@@ -12,6 +12,7 @@ interface ProfileData {
   name: string;
   email: string;
   created_at: string;
+  picture: string | null;
 }
 
 export default function ProfilePage() {
@@ -139,9 +140,13 @@ export default function ProfilePage() {
         {/* Profile Info */}
         <div className="mb-8 rounded-xl border border-border bg-surface p-6">
           <div className="mb-6 flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gemstone-600/20 text-gemstone-400">
-              <User className="h-7 w-7" />
-            </div>
+            {profile?.picture ? (
+              <img src={profile.picture} alt={profile.name} className="h-14 w-14 rounded-full object-cover" />
+            ) : (
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gemstone-600/20 text-gemstone-400">
+                <User className="h-7 w-7" />
+              </div>
+            )}
             <div>
               <h2 className="text-lg font-semibold text-text-primary">{profile?.name}</h2>
               <p className="text-sm text-text-muted">{profile?.email}</p>

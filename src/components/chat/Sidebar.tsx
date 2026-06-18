@@ -10,6 +10,7 @@ interface SessionUser {
   id: string;
   name: string;
   email: string;
+  picture: string | null;
 }
 
 interface SidebarProps {
@@ -127,9 +128,13 @@ export function Sidebar({ isOpen, onClose, onVoiceMode, user }: SidebarProps) {
             </button>
           )}
           <Link href="/auth/profile" className="flex items-center gap-3 rounded-md p-1.5 hover:bg-surface transition-colors group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gemstone-600/30 text-gemstone-400">
-              <User className="h-4 w-4" />
-            </div>
+            {user?.picture ? (
+              <img src={user.picture} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gemstone-600/30 text-gemstone-400">
+                <User className="h-4 w-4" />
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-text-primary truncate">{user?.name || "Guest"}</p>
               <p className="text-xs text-text-muted truncate">{user?.email || "Not signed in"}</p>

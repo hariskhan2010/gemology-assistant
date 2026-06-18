@@ -15,6 +15,7 @@ interface SessionUser {
   id: string;
   name: string;
   email: string;
+  picture: string | null;
 }
 
 export default function AssistantLayout() {

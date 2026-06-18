@@ -6,6 +6,7 @@ export interface SessionPayload {
   userId: string;
   email: string;
   name: string;
+  picture?: string;
 }
 
 export async function createSession(payload: SessionPayload): Promise<string> {

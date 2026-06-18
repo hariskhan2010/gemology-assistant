@@ -14,7 +14,7 @@ export async function GET() {
   const user = await findUserById(payload.userId);
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at } });
+  return NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at, picture: payload.picture || null } });
 }
 
 export async function PATCH(request: Request) {
