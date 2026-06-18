@@ -1,8 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { type Conversation, type Message } from "@/lib/types";
-import { mockConversations } from "@/lib/mock-data";
 
 interface ChatContextType {
   conversations: Conversation[];
@@ -26,7 +25,7 @@ function getConvMessages(convs: Conversation[], convId: string | null): { role: 
 }
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const [conversations, setConversations] = useState<Conversation[]>(mockConversations);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +33,31 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const activeConversation = activeId
     ? conversations.find((c) => c.id === activeId) || null
     : null;
+
+  useEffect(() => {
+    fetch("/api/conversations")
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load conversations");
+        return r.json();
+      })
+      .then((data) => {
+        const convs = (data.conversations || []).map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          messages: (c.messages || []).map((m: any) => ({
+            id: `msg-${m.timestamp}-${Math.random().toString(36).slice(2)}`,
+            role: m.role,
+            content: m.content,
+            image: m.image || undefined,
+            timestamp: new Date(m.timestamp),
+          })),
+          createdAt: new Date(c.createdAt),
+          updatedAt: new Date(c.updatedAt),
+        }));
+        setConversations(convs);
+      })
+      .catch(() => {});
+  }, []);
 
   const setActiveConversation = useCallback((id: string | null) => {
     setActiveId(id);
@@ -46,6 +70,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const deleteConversation = useCallback((id: string) => {
     setConversations((prev) => prev.filter((c) => c.id !== id));
     if (activeId === id) setActiveId(null);
+    fetch("/api/conversations", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    }).catch(() => {});
   }, [activeId]);
 
   const doStream = useCallback(async (
@@ -166,6 +195,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await doStream(targetId, assistantId, apiMessages);
+
+      if (isNewConv) {
+        fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: image ? "Image analysis" : content.slice(0, 40) + (content.length > 40 ? "..." : ""),
+            messages: apiMessages,
+          }),
+        }).catch(() => {});
+      }
     } catch (err) {
       const errorText = err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorText);
