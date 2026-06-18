@@ -1,16 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Menu, Plus, Search, Settings, LogOut, Gem, User, Headphones } from "lucide-react";
 import { useChat } from "@/lib/chat-context";
 import { cn } from "@/lib/utils";
-
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onVoiceMode?: () => void;
-}
 
 interface SessionUser {
   id: string;
@@ -18,16 +12,16 @@ interface SessionUser {
   email: string;
 }
 
-export function Sidebar({ isOpen, onClose, onVoiceMode }: SidebarProps) {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onVoiceMode?: () => void;
+  user: SessionUser | null;
+}
+
+export function Sidebar({ isOpen, onClose, onVoiceMode, user }: SidebarProps) {
   const { conversations, activeConversation, setActiveConversation, createNewConversation, deleteConversation } = useChat();
   const [searchQuery, setSearchQuery] = useState("");
-  const [user, setUser] = useState<SessionUser | null>(null);
-
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((res) => res.json())
-      .then((data) => setUser(data.user));
-  }, []);
 
   const handleSignOut = async () => {
     await fetch("/api/auth/signout", { method: "POST" });
