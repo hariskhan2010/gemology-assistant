@@ -126,7 +126,7 @@ No. **Hardness** is scratch resistance. **Toughness** is impact resistance. Jade
 - **Hardness under 7** — Warm water, mild soap, soft brush only
 - **All gems** — Store separately to prevent scratching softer stones
 
-Use our [Comparison Tool](/gems/compare) to see hardness side by side across all 25+ gemstones in the GemSage encyclopedia.
+Browse our [Gemstone Encyclopedia](/gems/encyclopedia) for complete hardness information on all 25+ gemstones.
   `,
   },
   {
@@ -186,7 +186,7 @@ Both are routinely heat-treated to improve color and clarity:
 2. **Fluorescence** — Ruby glows red under UV light; blue sapphire doesn't
 3. **Inclusions** — Ruby typically has more silk (rutile needles); sapphire has color zoning
 
-For a detailed comparison of all properties, visit our [Gem Comparison Tool](/gems/compare) or browse the [Ruby](/gems/encyclopedia/ruby) and [Sapphire](/gems/encyclopedia/sapphire) encyclopedia entries.
+Browse the [Ruby](/gems/encyclopedia/ruby) and [Sapphire](/gems/encyclopedia/sapphire) encyclopedia entries for detailed property information.
   `,
   },
   {
@@ -348,7 +348,7 @@ Untreated gems typically command 50–500% premium over treated equivalents. The
 | Tanzanite | $200–$1,500 |
 | Amethyst | $5–$50 |
 
-For specific price ranges on all 25+ gemstones, visit our [Gemstone Encyclopedia](/gems/encyclopedia) or use the [Comparison Tool](/gems/compare).
+For specific price ranges on all 25+ gemstones, visit our [Gemstone Encyclopedia](/gems/encyclopedia).
   `,
   },
 ];
