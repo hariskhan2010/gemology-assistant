@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [profileImgError, setProfileImgError] = useState(false);
 
   // Password change
   const [currentPassword, setCurrentPassword] = useState("");
@@ -140,8 +141,8 @@ export default function ProfilePage() {
         {/* Profile Info */}
         <div className="mb-8 rounded-xl border border-border bg-surface p-6">
           <div className="mb-6 flex items-center gap-4">
-            {profile?.picture ? (
-              <img src={profile.picture} alt={profile.name} className="h-14 w-14 rounded-full object-cover" />
+            {profile?.picture && !profileImgError ? (
+              <img src={profile.picture} alt={profile.name} className="h-14 w-14 rounded-full object-cover" referrerPolicy="no-referrer" onError={() => setProfileImgError(true)} />
             ) : (
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gemstone-600/20 text-gemstone-400">
                 <User className="h-7 w-7" />
