@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import NextImage from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Search, Camera, BookOpen, Sparkles, Shield, Zap, Library, Columns3, Bookmark, ImageIcon, User } from "lucide-react";
+import { Search, Camera, BookOpen, Sparkles, Shield, Zap, Library, Bookmark, ImageIcon, User } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -34,13 +34,6 @@ const features = [
     description: "Browse a comprehensive directory of gemstones with detailed properties, origins, treatments, and price ranges.",
     badge: "Reference",
     href: "/gems/encyclopedia",
-  },
-  {
-    icon: Columns3,
-    title: "Side-by-Side Compare",
-    description: "Compare gemstones across all key properties including hardness, RI, SG, and price ranges.",
-    badge: "Tool",
-    href: "/gems/compare",
   },
   {
     icon: Bookmark,

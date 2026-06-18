@@ -30,9 +30,6 @@ export default function Navbar() {
             <Link href="/gems/encyclopedia" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
               Encyclopedia
             </Link>
-            <Link href="/gems/compare" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-              Compare
-            </Link>
             <Link href="/blog" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
               Blog
             </Link>
