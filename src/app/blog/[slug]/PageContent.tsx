@@ -1,8 +1,9 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, Tag, BookOpen } from "lucide-react";
+import { ArrowLeft, Clock, Tag, BookOpen, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { blogArticles } from "@/lib/knowledge/blog";
 import { notFound } from "next/navigation";
@@ -11,8 +12,29 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export default function BlogArticlePage() {
   const { slug } = useParams<{ slug: string }>();
+  const router = useRouter();
   const article = blogArticles.find((a) => a.slug === slug);
   usePageTitle(article ? `${article.title} | GemSage` : "Article Not Found");
+
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.user) router.push("/auth/signin");
+        else setAuthChecked(true);
+      })
+      .catch(() => router.push("/auth/signin"));
+  }, [router]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gemstone-400" />
+      </div>
+    );
+  }
 
   if (!article) notFound();
 

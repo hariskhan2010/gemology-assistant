@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, Gem } from "lucide-react";
+import { Search, Gem, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { gemstones, categories } from "@/lib/knowledge/gemstones";
 import { usePageTitle } from "@/hooks/use-page-title";
@@ -11,9 +12,30 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 const BASE = "https://gemology-assistant.vercel.app";
 
 export default function EncyclopediaPage() {
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.user) router.push("/auth/signin");
+        else setAuthChecked(true);
+      })
+      .catch(() => router.push("/auth/signin"));
+  }, [router]);
+
   usePageTitle("Gemstone Encyclopedia");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gemstone-400" />
+      </div>
+    );
+  }
 
   const filtered = gemstones.filter((g) => {
     const matchSearch = g.name.toLowerCase().includes(search.toLowerCase()) ||

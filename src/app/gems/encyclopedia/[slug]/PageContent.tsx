@@ -16,6 +16,26 @@ export default function GemDetailPage() {
   const gem = gemstones.find((g) => g.slug === slug);
   usePageTitle(gem ? `${gem.name} – Properties, Price & Treatments` : "Gem Guide");
 
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.user) router.push("/auth/signin");
+        else setAuthChecked(true);
+      })
+      .catch(() => router.push("/auth/signin"));
+  }, [router]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gemstone-400" />
+      </div>
+    );
+  }
+
   const [isSaved, setIsSaved] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
