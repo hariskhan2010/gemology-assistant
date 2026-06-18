@@ -44,7 +44,7 @@ export async function GET(request: Request) {
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-change-in-production");
     const token = await new SignJWT({
-      id: user.id || user.sub,
+      userId: user.id || user.sub,
       email: user.email,
       name: user.name,
       picture: user.picture,
