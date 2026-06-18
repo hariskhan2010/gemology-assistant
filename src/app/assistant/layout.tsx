@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, Headphones } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2, Menu, Headphones } from "lucide-react";
 import { Sidebar } from "@/components/chat/Sidebar";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatArea } from "@/components/chat/ChatArea";
@@ -11,10 +12,31 @@ import { ChatProvider } from "@/lib/chat-context";
 import { usePageTitle } from "@/hooks/use-page-title";
 
 export default function AssistantLayout() {
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.user) router.push("/auth/signin");
+        else setAuthChecked(true);
+      })
+      .catch(() => router.push("/auth/signin"));
+  }, [router]);
+
   usePageTitle("AI Gemologist Assistant");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
   const [cameraTalkOpen, setCameraTalkOpen] = useState(false);
+
+  if (!authChecked) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-gemstone-400" />
+      </div>
+    );
+  }
 
   return (
     <ChatProvider>
