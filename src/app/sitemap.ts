@@ -1,5 +1,6 @@
 import { gemstones } from "@/lib/knowledge/gemstones";
 import { blogArticles } from "@/lib/knowledge/blog";
+import { comparisons } from "@/lib/knowledge/comparisons";
 
 const BASE = "https://gemology-assistant.vercel.app";
 
@@ -8,6 +9,7 @@ export default async function sitemap() {
     { url: `${BASE}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1 },
     { url: `${BASE}/assistant`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
     { url: `${BASE}/gems/encyclopedia`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${BASE}/gems/compare`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 },
     { url: `${BASE}/gems/gallery`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.4 },
     { url: `${BASE}/gems/saved`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.4 },
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
@@ -32,5 +34,12 @@ export default async function sitemap() {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...gemPages, ...blogPages];
+  const comparePages = comparisons.map((c) => ({
+    url: `${BASE}/compare/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...gemPages, ...blogPages, ...comparePages];
 }
