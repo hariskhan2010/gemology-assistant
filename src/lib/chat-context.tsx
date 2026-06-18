@@ -197,13 +197,53 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       await doStream(targetId, assistantId, apiMessages);
 
       if (isNewConv) {
+        const title = image ? "Image analysis" : content.slice(0, 40) + (content.length > 40 ? "..." : "");
         fetch("/api/conversations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, messages: apiMessages }),
+        }).catch(() => {});
+
+        fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: image ? "Image analysis" : content.slice(0, 40) + (content.length > 40 ? "..." : ""),
-            messages: apiMessages,
+            messages: [
+              { role: "system", content: "Generate a concise title (max 6 words) for this conversation based on the user's first message. Reply with ONLY the title, no quotes or punctuation." },
+              ...apiMessages.slice(0, 1),
+            ],
+            conversationId: targetId,
           }),
+        }).then(async (r) => {
+          if (!r.ok) return;
+          const reader = r.body?.getReader();
+          if (!reader) return;
+          const decoder = new TextDecoder();
+          let genTitle = "";
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            for (const line of chunk.split("\n")) {
+              if (line.startsWith("data: ") && line.slice(6) !== "[DONE]") {
+                try {
+                  const parsed = JSON.parse(line.slice(6));
+                  if (parsed.text) genTitle += parsed.text;
+                } catch {}
+              }
+            }
+          }
+          const cleanTitle = genTitle.replace(/["'.!?]+$/, "").trim();
+          if (cleanTitle && cleanTitle.length > 3) {
+            setConversations((prev) =>
+              prev.map((c) => (c.id === targetId ? { ...c, title: cleanTitle } : c))
+            );
+            fetch("/api/conversations", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: targetId, title: cleanTitle }),
+            }).catch(() => {});
+          }
         }).catch(() => {});
       }
     } catch (err) {
