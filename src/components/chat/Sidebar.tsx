@@ -27,7 +27,7 @@ export function Sidebar({ isOpen, onClose, onVoiceMode, user }: SidebarProps) {
 
   const handleSignOut = async () => {
     await fetch("/api/auth/signout", { method: "POST" });
-    window.location.href = "/auth";
+    window.location.href = "/auth/signin";
   };
 
   const filtered = conversations.filter((c) =>
