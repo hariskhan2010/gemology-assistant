@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32">
   <style>
     @keyframes spin {
       from { transform: rotate(0deg); transform-origin: 16px 16px; }
@@ -6,16 +6,5 @@
     }
     .gem { animation: spin 3s linear infinite; }
   </style>
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#34d399"/>
-      <stop offset="50%" stop-color="#059669"/>
-      <stop offset="100%" stop-color="#047857"/>
-    </linearGradient>
-  </defs>
-  <g class="gem">
-    <polygon points="16,2 28,12 16,30 4,12" fill="url(#g)" stroke="#34d399" stroke-width="1"/>
-    <polygon points="16,10 28,12 16,30 4,12" fill="rgba(255,255,255,0.15)"/>
-    <polygon points="16,2 28,12 16,10" fill="rgba(255,255,255,0.25)"/>
-  </g>
+  <image class="gem" href="data:image/webp;base64,UklGRgwEAABXRUJQVlA4WAoAAAAQAAAAHwAAHwAAQUxQSHQBAAABkCzJtmlb49q2bT7btm3btm21bdu2bdv24WistRXvByJiAqAxtqIjjMxaZuKD/r66ZW2wUfwxNxaAh4ZaPtXX2als3jwlZVWAmqouUWeo9WCFkiVk7gEB+69fo/bLpr/Rktp9UZ367ndBMSB35+nKe3W60mzUjdJAaJVd1PtBxgAATvuo/4siwcWcltHI50lYQWNf59Lob4b9/xN/GnQPBwxaiJYGFYfbV8nJ+xpev5c8cQAWSk6X5U8V1+0N90uuAsiVkKax3V5KXjQbtiXLJukHVPQ4Iav4dWtYfzM5PnitKXETxfMASrg2kzUbxEeFmtlmxlzhkkI2STeIIbL7Hnf4r1f50m9pTdhJ8aef4Ddbxp41SZ7+R74uTvFva0jzTPwlfPLfTtE67biwNxmKKbPc2j8nuSjVJAytSZJLodYPcOvzgfbWM0i+iP/ALwPqeKuS+oz69jnyFdlxpnleIPQNmjmgGW/6rcuB/q44WscBGgFWUDggcgIAABAMAJ0BKiAAIAABQCYlsAJ0yhIFu6D4Esk7yPZgmz76B4G96fxcfqRArTO7YwA4c/6B4A0d/qd/vPiR+Zv14+AD9bPRd9Zv7Aeyl+0qDpfkKdcoFnhB3RNrrJFW/WdsJh0hZOe+ZX6EAAD+9CDZx84idusFzfyXQkG2Nnod7PmEVKywKV48N5pmKVebNdu28LDkWCPm6G2BbWgrSXZKiRIrfcn1+GnUIUY0+QLNNijC6Uvxj9JJw5mJa+cizloEADzhJxD/LdwX1XhKKrKdbLEQF+ZfsKuV62Yig2u9Jz5LWjcu5sPzY5ZKJHvP47WrHP3dxp17F6vF9Mon4UN0sTwK9psw6x4hLFvs09Z4Gc4HQ9H9XG86f6ZfRVrmm2p6KrNSnuNey78xbsfFVQZ7D45CR9+X8UVwYvNcY7odR9fhAuj5/7YB/KYFRW3aJ6ATNFml1BGrMMkzZmJv9N16YOstXDgblQzAKV3pDK7MdLPP0O3/QhnqRXOQsqqlIbTlGkjG2WEbM2uYYur7+vtu158DLumOXXF7IzGz5p9wd+X7aDNNRLJvUlGinQLQzVZrS8LsJsQoC9l9MAOR3hfdB1905s/Bg5eFSoRDbDi0TfeaUgPLRY9X3A8GFyYGv2vpt8PZwuBYOoD1/JfxzQ5q78duopn7+7i9mhcilpg2bs7rXWEJDANLPtxRg/x1f12n4LTocSbFsd1uPiaM4J5nwZIueDhP0ehvAYYILQjI6i68lK4cEZT6c55p19RgkX9NcawoiCwwNIVyOmXcC6VPj9cydqVZrIAtAQyBHWsNqlT4Nb5RgiivE3t5zMdTLw9DYAAA" width="32" height="32"/>
 </svg>
