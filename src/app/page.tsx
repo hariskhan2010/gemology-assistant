@@ -224,7 +224,7 @@ export default function Home() {
                     width={320}
                     height={320}
                     className="object-contain"
-                    style={{ filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
+                    style={{ width: "auto", height: "auto", filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
                   />
                 </div>
                 <div className="absolute -z-10 flex items-center justify-center">
