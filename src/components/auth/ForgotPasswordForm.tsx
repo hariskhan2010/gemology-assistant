@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Mail, ArrowLeft } from "lucide-react";
 import { AuthInput } from "@/components/auth/ui/AuthInput";
@@ -44,10 +45,20 @@ export default function ForgotPasswordForm() {
 
   if (isSent) {
     return (
-      <div className="space-y-8 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gemstone-600/20 text-gemstone-400">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="space-y-8 text-center"
+      >
+        <motion.div
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gemstone-600/20 text-gemstone-400"
+        >
           <Mail className="h-8 w-8" />
-        </div>
+        </motion.div>
         <div>
           <h2 className="font-heading text-3xl font-bold text-text-primary">Check your email</h2>
           <p className="mt-2 text-sm text-text-secondary">
@@ -61,12 +72,17 @@ export default function ForgotPasswordForm() {
           <ArrowLeft className="h-4 w-4" />
           Back to Sign In
         </Link>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="space-y-8"
+    >
       <div>
         <Link href="/auth/signin" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-gemstone-400 transition-colors mb-4 group">
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -77,15 +93,18 @@ export default function ForgotPasswordForm() {
       </div>
 
       {error && (
-        <div className="rounded-md border border-ruby-500/30 bg-ruby-500/10 px-4 py-3 text-sm text-ruby-400">
+        <motion.div
+          initial={{ opacity: 0, y: -10, height: 0 }}
+          animate={{ opacity: 1, y: 0, height: "auto" }}
+          className="rounded-lg border border-ruby-500/30 bg-ruby-500/10 px-4 py-3 text-sm text-ruby-400"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
         <AuthInput
           id="forgot-email"
-          name="forgot-email-field"
           label="Email"
           type="text"
           placeholder="you@example.com"
@@ -99,6 +118,6 @@ export default function ForgotPasswordForm() {
           Send Reset Link
         </AuthSubmitButton>
       </form>
-    </div>
+    </motion.div>
   );
 }

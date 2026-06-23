@@ -14,7 +14,7 @@ export default function BlogArticlePage() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
   const article = blogArticles.find((a) => a.slug === slug);
-  usePageTitle(article ? `${article.title} | GemSage` : "Article Not Found");
+  usePageTitle(article ? `${article.title} | StoneWise` : "Article Not Found");
 
   const [authChecked, setAuthChecked] = useState(false);
 
@@ -105,7 +105,7 @@ export default function BlogArticlePage() {
             headline: article.title,
             description: article.description,
             datePublished: article.published,
-            author: { "@type": "Organization", name: "GemSage" },
+            author: { "@type": "Organization", name: "StoneWise" },
           }),
         }}
       />
@@ -145,7 +145,7 @@ export default function BlogArticlePage() {
                 </Link>
                 <Link href="/assistant" className="inline-flex items-center gap-1.5 rounded-lg bg-gemstone-600 px-4 py-2 text-sm font-medium text-white hover:bg-gemstone-500 transition-colors">
                   <BookOpen className="h-4 w-4" />
-                  Try GemSage
+                  Try StoneWise
                 </Link>
               </div>
             </div>

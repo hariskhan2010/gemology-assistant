@@ -106,7 +106,7 @@ export default function GemDetailPage() {
             category: `${gem.category} Gemstone`,
             description: gem.description,
             material: gem.crystal,
-            brand: { "@type": "Brand", name: "GemSage" },
+            brand: { "@type": "Brand", name: "StoneWise" },
           }),
         }}
       />

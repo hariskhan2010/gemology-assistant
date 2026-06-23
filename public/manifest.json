@@ -1,6 +1,6 @@
 {
-  "name": "GemSage - AI Gemology Assistant",
-  "short_name": "GemSage",
+  "name": "StoneWise - Gemology AI Assistant",
+  "short_name": "StoneWise",
   "description": "Expert gemology guidance powered by AI. Identify gems, learn properties, and master faceting.",
   "start_url": "/",
   "display": "standalone",

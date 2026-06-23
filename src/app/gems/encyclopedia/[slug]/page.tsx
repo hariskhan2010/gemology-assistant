@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title: `${gem.name} – Properties, Price & Treatments`,
     description: `Learn about ${gem.name}: ${gem.mohs} Mohs hardness, ${gem.color}, price range ${gem.priceRange}. Common treatments include ${gem.treatments.join(", ") || "none"}.`,
     openGraph: {
-      title: `${gem.name} – Properties, Price & Treatments | GemSage`,
+      title: `${gem.name} – Properties, Price & Treatments | StoneWise`,
       description: `${gem.name} gemstone guide: ${gem.mohs} Mohs, ${gem.color}, price ${gem.priceRange}.`,
     },
   };

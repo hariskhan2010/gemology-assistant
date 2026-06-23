@@ -16,7 +16,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
 
   useEffect(() => {
-    const stored = localStorage.getItem("gemsage-theme") as Theme | null;
+    const stored = localStorage.getItem("stonewise-theme") as Theme | null;
     if (stored === "light" || stored === "dark") {
       setThemeState(stored);
       document.documentElement.classList.toggle("light", stored === "light");
@@ -24,11 +24,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       document.documentElement.classList.add("dark");
     }
+    document.documentElement.style.transition = "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease";
   }, []);
 
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
-    localStorage.setItem("gemsage-theme", t);
+    localStorage.setItem("stonewise-theme", t);
     document.documentElement.classList.toggle("light", t === "light");
     document.documentElement.classList.toggle("dark", t === "dark");
   }, []);

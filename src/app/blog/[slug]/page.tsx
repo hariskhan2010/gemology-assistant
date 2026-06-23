@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title: article.title,
     description: article.description,
     openGraph: {
-      title: `${article.title} | GemSage`,
+      title: `${article.title} | StoneWise`,
       description: article.description,
     },
   };

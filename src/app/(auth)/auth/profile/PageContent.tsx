@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Mail, Calendar, Save, Trash2, Loader2, Eye, EyeOff, KeyRound } from "lucide-react";
+import { motion } from "framer-motion";
+import { User, Mail, Save, Trash2, Loader2, Eye, EyeOff, KeyRound, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePageTitle } from "@/hooks/use-page-title";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -126,7 +127,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-background"
+    >
       <div className="mx-auto max-w-2xl px-4 py-12">
         <Breadcrumbs items={[
           { label: "Home", href: "/" },
@@ -139,10 +145,15 @@ export default function ProfilePage() {
         </div>
 
         {/* Profile Info */}
-        <div className="mb-8 rounded-xl border border-border bg-surface p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="mb-8 rounded-xl border border-border bg-surface p-6"
+        >
           <div className="mb-6 flex items-center gap-4">
             {profile?.picture && !profileImgError ? (
-              <img src={profile.picture} alt={profile.name} className="h-14 w-14 rounded-full object-cover" referrerPolicy="no-referrer" onError={() => setProfileImgError(true)} />
+              <img src={profile.picture} alt={profile.name} className="h-14 w-14 rounded-full object-cover ring-2 ring-border" referrerPolicy="no-referrer" onError={() => setProfileImgError(true)} />
             ) : (
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gemstone-600/20 text-gemstone-400">
                 <User className="h-7 w-7" />
@@ -161,29 +172,38 @@ export default function ProfilePage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500"
+                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500 transition-colors"
               />
             </div>
             <div className="flex items-center gap-3">
               <button
                 type="submit"
                 disabled={isSaving || !name.trim()}
-                className="inline-flex items-center gap-2 rounded-lg bg-gemstone-600 px-4 py-2 text-sm font-medium text-white hover:bg-gemstone-500 disabled:opacity-50 transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg bg-gemstone-600 px-4 py-2 text-sm font-medium text-white hover:bg-gemstone-500 disabled:opacity-50 transition-all hover:-translate-y-0.5"
               >
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save
               </button>
               {message && (
-                <span className={`text-sm ${message.type === "success" ? "text-gemstone-400" : "text-ruby-400"}`}>
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`text-sm ${message.type === "success" ? "text-gemstone-400" : "text-ruby-400"}`}
+                >
                   {message.text}
-                </span>
+                </motion.span>
               )}
             </div>
           </form>
-        </div>
+        </motion.div>
 
         {/* Change Password */}
-        <div className="mb-8 rounded-xl border border-border bg-surface p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="mb-8 rounded-xl border border-border bg-surface p-6"
+        >
           <div className="mb-6 flex items-center gap-3">
             <KeyRound className="h-5 w-5 text-gemstone-400" />
             <h2 className="text-lg font-semibold text-text-primary">Change Password</h2>
@@ -197,9 +217,9 @@ export default function ProfilePage() {
                   type={showCurrent ? "text" : "password"}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500"
+                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500 transition-colors"
                 />
-                <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary">
+                <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
                   {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -211,9 +231,9 @@ export default function ProfilePage() {
                   type={showNew ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500"
+                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500 transition-colors"
                 />
-                <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary">
+                <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
                   {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -225,9 +245,9 @@ export default function ProfilePage() {
                   type={showConfirm ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500"
+                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-gemstone-500 focus:outline-none focus:ring-1 focus:ring-gemstone-500 transition-colors"
                 />
-                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary">
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -236,22 +256,31 @@ export default function ProfilePage() {
               <button
                 type="submit"
                 disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword}
-                className="inline-flex items-center gap-2 rounded-lg bg-gemstone-600 px-4 py-2 text-sm font-medium text-white hover:bg-gemstone-500 disabled:opacity-50 transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg bg-gemstone-600 px-4 py-2 text-sm font-medium text-white hover:bg-gemstone-500 disabled:opacity-50 transition-all hover:-translate-y-0.5"
               >
                 {isChangingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
                 Change Password
               </button>
               {passwordMessage && (
-                <span className={`text-sm ${passwordMessage.type === "success" ? "text-gemstone-400" : "text-ruby-400"}`}>
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`text-sm ${passwordMessage.type === "success" ? "text-gemstone-400" : "text-ruby-400"}`}
+                >
                   {passwordMessage.text}
-                </span>
+                </motion.span>
               )}
             </div>
           </form>
-        </div>
+        </motion.div>
 
         {/* Delete Account */}
-        <div className="rounded-xl border border-ruby-500/30 bg-ruby-500/5 p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="rounded-xl border border-ruby-500/30 bg-ruby-500/5 p-6"
+        >
           <div className="mb-4 flex items-center gap-3">
             <Trash2 className="h-5 w-5 text-ruby-400" />
             <h2 className="text-lg font-semibold text-text-primary">Delete Account</h2>
@@ -265,19 +294,19 @@ export default function ProfilePage() {
               value={confirmDelete}
               onChange={(e) => setConfirmDelete(e.target.value)}
               placeholder="Type DELETE to confirm"
-              className="w-48 rounded-lg border border-border bg-background px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-ruby-500 focus:outline-none focus:ring-1 focus:ring-ruby-500"
+              className="w-48 rounded-lg border border-border bg-background px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-ruby-500 focus:outline-none focus:ring-1 focus:ring-ruby-500 transition-colors"
             />
             <button
               onClick={handleDeleteAccount}
               disabled={confirmDelete !== "DELETE" || isDeleting}
-              className="inline-flex items-center gap-2 rounded-lg bg-ruby-600 px-4 py-2 text-sm font-medium text-white hover:bg-ruby-500 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-ruby-600 px-4 py-2 text-sm font-medium text-white hover:bg-ruby-500 disabled:opacity-50 transition-all hover:-translate-y-0.5"
             >
               {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               Delete
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

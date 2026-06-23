@@ -302,7 +302,7 @@ export function CameraTalk({ isOpen, onClose }: CameraTalkProps) {
           )}
           {lastResponse && (
             <div className="text-center text-sm text-text-primary">
-              <span className="font-medium text-emerald-400">GemSage:</span> {lastResponse}
+              <span className="font-medium text-emerald-400">StoneWise:</span> {lastResponse}
             </div>
           )}
         </div>

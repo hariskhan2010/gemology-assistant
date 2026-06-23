@@ -3,8 +3,8 @@ import ProfilePage from "./PageContent";
 
 export const metadata: Metadata = {
   title: "Profile Settings",
-  description: "Manage your GemSage profile, update your name, change your password, or delete your account.",
-  openGraph: { title: "Profile Settings | GemSage", description: "Manage your GemSage account settings." },
+  description: "Manage your StoneWise profile, update your name, change your password, or delete your account.",
+  openGraph: { title: "Profile Settings | StoneWise", description: "Manage your StoneWise account settings." },
 };
 
 export default function Page() {

@@ -33,7 +33,7 @@ When agent receives a message in a specific chat:
 ```
 System Prompt:
 ---
-You are the GemSage assistant.
+You are the StoneWise assistant.
 
 LONG-TERM NOTES (user has told you to remember):
 - User's name is Haris

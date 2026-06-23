@@ -1,0 +1,27 @@
+﻿  Γû▓ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe : Failed to compile.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/lib/knowledge/gemstones.ts:232:5
+Type error: Type 'string' is not assignable to type 'number'.
+
+[0m [90m 230 |[39m     category[33m:[39m [32m"Organic/ornamental"[39m[33m,[39m[0m
+[0m [90m 231 |[39m     color[33m:[39m [32m"Green, white, lavender, yellow, orange, red, 
+black"[39m[33m,[39m[0m
+[0m[31m[1m>[22m[39m[90m 232 |[39m     mohs[33m:[39m [32m"6.5ΓÇô7 (jadeite), 6ΓÇô6.5 
+(nephrite)"[39m[33m,[39m[0m
+[0m [90m     |[39m     [31m[1m^[22m[39m[0m
+[0m [90m 233 |[39m     ri[33m:[39m [32m"1.64ΓÇô1.67 (jadeite), 1.60ΓÇô1.63 (nephrite)"[39m[33m,[39m[0m
+[0m [90m 234 |[39m     sg[33m:[39m [32m"3.30ΓÇô3.38 (jadeite), 2.90ΓÇô3.03 (nephrite)"[39m[33m,[39m[0m
+[0m [90m 235 |[39m     crystal[33m:[39m [32m"Monoclinic (aggregate)"[39m[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null

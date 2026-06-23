@@ -1,8 +1,8 @@
-# Phase Index - GemSage: Gemology AI Assistant
+# Phase Index - StoneWise: Gemology AI Assistant
 
 ## Overview
 
-GemSage is an AI-powered gemology assistant that helps users identify gems, learn about gemstone properties, get faceting guidance, and interact via text, image, and voice.
+StoneWise is an AI-powered gemology assistant that helps users identify gems, learn about gemstone properties, get faceting guidance, and interact via text, image, and voice.
 
 ## Phase Breakdown
 

@@ -1,6 +1,6 @@
-# GemSage — SEO & Implementation Audit
+# StoneWise — SEO & Implementation Audit
 
-> GemSage is an AI-powered gemology assistant for gem identification, faceting guidance, and gemstone education.
+> StoneWise is an AI-powered gemology assistant for gem identification, faceting guidance, and gemstone education.
 > Site: gemology-assistant.vercel.app | Repo: github.com/hariskhan2010/gemology-assistant
 
 ---

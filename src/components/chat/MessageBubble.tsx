@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { cn, easeOut } from "@/lib/utils";
 import { X, Volume2, Square } from "lucide-react";
 import { useTextToSpeech } from "@/hooks/use-text-to-speech";
 
@@ -44,8 +45,8 @@ export function MessageBubble({ role, content, image, timestamp, onRetry }: Mess
         if (inCodeBlock) {
           flushList();
           elements.push(
-            <pre key={`code-${codeKey++}`} className="my-3 rounded-md bg-surface-elevated p-3 overflow-x-auto">
-              <code className="text-sm font-mono text-text-secondary">{codeContent}</code>
+            <pre key={`code-${codeKey++}`} className="my-3 rounded-lg bg-surface-elevated p-4 overflow-x-auto border border-border/50">
+              <code className="text-sm font-mono text-text-secondary leading-relaxed">{codeContent}</code>
             </pre>
           );
           codeContent = "";
@@ -110,40 +111,50 @@ export function MessageBubble({ role, content, image, timestamp, onRetry }: Mess
 
   if (role === "system") {
     return (
-      <div className="flex justify-center py-4">
-        <div className="flex items-center gap-2 rounded-full border border-border bg-surface/50 px-4 py-2 text-xs text-text-muted">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex justify-center py-4"
+      >
+        <div className="flex items-center gap-2 rounded-full border border-border bg-surface/50 px-4 py-2 text-xs text-text-muted backdrop-blur-sm">
           <span>{formatContent(content)}</span>
           <span className="text-text-muted/60">{formatTime(timestamp)}</span>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <>
-      <div className={cn(
-        "flex gap-3 py-4 group",
-        role === "user" ? "justify-end" : "justify-start"
-      )}>
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.3, ease: easeOut as any }}
+        className={cn(
+          "flex gap-3 py-4 group",
+          role === "user" ? "justify-end" : "justify-start"
+        )}
+      >
         {role === "assistant" && (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gemstone-600/30 text-gemstone-400">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gemstone-600/30 text-gemstone-400 shadow-inner">
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
           </div>
         )}
         <div className={cn(
-          "max-w-2xl rounded-lg px-4 py-3 text-sm leading-relaxed",
+          "max-w-2xl rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm",
           role === "user"
-            ? "bg-gemstone-600 text-white"
-            : "bg-surface text-text-primary"
+            ? "bg-gemstone-600 text-white rounded-tr-md"
+            : "bg-surface text-text-primary rounded-tl-md border border-border/50"
         )}>
           {image && (
             <div className="mb-3">
               <img
                 src={image}
                 alt="Attached"
-                className="max-h-64 rounded-lg cursor-pointer object-contain bg-black/20"
+                className="max-h-64 rounded-lg cursor-pointer object-contain bg-black/20 transition-transform hover:scale-[1.02]"
                 onClick={() => setImageModalOpen(true)}
               />
             </div>
@@ -181,30 +192,38 @@ export function MessageBubble({ role, content, image, timestamp, onRetry }: Mess
           </div>
         </div>
         {role === "user" && (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-text-secondary">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-text-secondary border border-border/50">
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {imageModalOpen && image && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
           onClick={() => setImageModalOpen(false)}
         >
-          <div className="relative max-h-[90vh] max-w-[90vw]">
-            <img src={image} alt="Full size" className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg" />
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="relative max-h-[90vh] max-w-[90vw]"
+          >
+            <img src={image} alt="Full size" className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl" />
             <button
               onClick={() => setImageModalOpen(false)}
-              className="absolute -top-2 -right-2 rounded-full bg-surface p-1.5 text-text-muted hover:text-text-primary border border-border"
+              className="absolute -top-3 -right-3 rounded-full bg-surface p-1.5 text-text-muted hover:text-text-primary border border-border shadow-lg transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
     </>
   );

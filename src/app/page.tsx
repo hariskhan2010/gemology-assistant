@@ -1,10 +1,16 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NextImage from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Search, Camera, BookOpen, Sparkles, Shield, Zap, Library, Bookmark, ImageIcon, User } from "lucide-react";
+import { easeOut } from "@/lib/utils";
+import { Search, Camera, BookOpen, Sparkles, Shield, Library, Bookmark, ImageIcon, User, Gem, ArrowRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import GemOfTheDay from "@/components/GemOfTheDay";
 
 const features = [
   {
@@ -65,44 +71,156 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut } },
+};
+
+function StatCounter({ target, label, suffix = "" }: { target: number; label: string; suffix?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+    return () => clearInterval(timer);
+  }, [isInView, target]);
+
+  return (
+    <div ref={ref} className="text-center">
+      <div className="font-heading text-3xl font-bold text-gemstone-400 sm:text-4xl">
+        {count}{suffix}
+      </div>
+      <div className="mt-1 text-sm text-text-secondary">{label}</div>
+    </div>
+  );
+}
+
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.6, ease: easeOut as any }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);
+  const [heroLoaded, setHeroLoaded] = useState(false);
+
+  useEffect(() => {
+    setHeroLoaded(true);
+  }, []);
+
   return (
     <>
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative overflow-hidden">
+        <motion.section style={{ opacity: heroOpacity }} className="relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-gemstone-600/10 via-transparent to-transparent" />
-          <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="animate-orb-slow absolute -left-32 -top-32 h-96 w-96 rounded-full bg-gemstone-600/20 blur-3xl" />
+            <div className="animate-orb-medium absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+          </div>
+          <motion.div style={{ scale: heroScale }} className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
             <div className="text-center">
-              <h1 className="font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, ease: easeOut as any }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={heroLoaded ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="mb-6 inline-flex items-center gap-2 rounded-full border border-gemstone-500/30 bg-gemstone-600/10 px-4 py-1.5 text-sm text-gemstone-400"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>AI-Powered Gemology Assistant</span>
+                </motion.div>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.15, ease: easeOut as any }}
+                className="font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+              >
                 Your AI-Powered{" "}
-                <span className="bg-gradient-to-r from-gemstone-300 via-gemstone-400 to-emerald-500 bg-clip-text text-transparent">
+                <span className="text-shimmer">
                   Gemology Expert
                 </span>
-              </h1>
-              <p className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary">
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.25, ease: easeOut as any }}
+                className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary"
+              >
                 Identify gems, master faceting, and unlock the secrets of precious stones with an intelligent assistant built for gemologists, jewelers, and enthusiasts.
-              </p>
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.35, ease: easeOut as any }}
+                className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+              >
                 <Link href="/auth/signin" className="group inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
                   Go to Assistant
-                  <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <a href="#features" className="inline-flex h-12 items-center justify-center rounded-md border border-border bg-surface px-8 text-base font-medium text-text-primary transition-all hover:bg-surface-elevated hover:-translate-y-0.5 hover:border-gemstone-500/50">
                   Explore Features
                 </a>
-              </div>
+              </motion.div>
             </div>
+
             {/* Rotating Gemstone */}
-            <div className="mt-16 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={heroLoaded ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.45, ease: easeOut as any }}
+              className="mt-16 flex justify-center"
+            >
               <div className="relative flex items-center justify-center perspective-1000">
                 <div className="animate-gem-rotate preserve-3d">
                   <NextImage
                     src="/gem_logo.webp"
-                    alt="GemSage Gemstone"
+                    alt="StoneWise Gemstone"
                     width={320}
                     height={320}
                     className="object-contain"
@@ -113,54 +231,136 @@ export default function Home() {
                   <div className="h-48 w-48 rounded-full bg-gemstone-400/30 blur-3xl animate-pulse-slow" />
                 </div>
               </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={heroLoaded ? { opacity: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="mt-12 flex justify-center"
+            >
+              <motion.a
+                href="#features"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="text-text-muted hover:text-text-primary transition-colors"
+              >
+                <ChevronDown className="h-6 w-6" />
+              </motion.a>
+            </motion.div>
+          </motion.div>
+        </motion.section>
+
+        {/* Gem of the Day */}
+        <GemOfTheDay />
+
+        {/* Stats Section */}
+        <AnimatedSection>
+          <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 gap-8 rounded-2xl border border-border/50 bg-surface/40 backdrop-blur-sm px-8 py-12 sm:grid-cols-4">
+              <StatCounter target={25} suffix="+" label="Gemstones Covered" />
+              <StatCounter target={12} suffix="+" label="Faceting Designs" />
+              <StatCounter target={50} suffix="+" label="Knowledge Articles" />
+              <StatCounter target={1000} suffix="+" label="Happy Users" />
             </div>
-          </div>
-        </section>
+          </section>
+        </AnimatedSection>
 
         {/* Features Grid */}
-        <section id="features" className="scroll-mt-24 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="font-heading text-3xl font-bold sm:text-4xl">Powerful Features</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-text-secondary">
-              Everything you need to become a gemology expert, powered by cutting-edge AI.
-            </p>
-          </div>
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <Link key={feature.title} href={feature.href}>
-                  <Card variant="glass" className="card-3d group cursor-pointer h-full">
-                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gemstone-600/20 text-gemstone-400 shadow-inner transition-all group-hover:bg-gemstone-600/30 group-hover:shadow-gemstone-500/10">
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-semibold">{feature.title}</h3>
-                      <Badge variant="default">{feature.badge}</Badge>
-                    </div>
-                    <p className="mt-2 text-sm text-text-secondary">{feature.description}</p>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+        <AnimatedSection>
+          <section id="features" className="scroll-mt-24 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="font-heading text-3xl font-bold sm:text-4xl"
+              >
+                Powerful Features
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="mx-auto mt-4 max-w-2xl text-text-secondary"
+              >
+                Everything you need to become a gemology expert, powered by cutting-edge AI.
+              </motion.p>
+            </div>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {features.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <motion.div key={feature.title} variants={itemVariants}>
+                    <Link href={feature.href}>
+                      <Card variant="glass" className="card-3d group cursor-pointer h-full">
+                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gemstone-600/20 text-gemstone-400 shadow-inner transition-all group-hover:bg-gemstone-600/30 group-hover:shadow-gemstone-500/10 group-hover:scale-110 group-hover:-translate-y-0.5">
+                          <Icon className="h-6 w-6" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-semibold">{feature.title}</h3>
+                          <Badge variant="default">{feature.badge}</Badge>
+                        </div>
+                        <p className="mt-2 text-sm text-text-secondary">{feature.description}</p>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </section>
+        </AnimatedSection>
 
         {/* CTA Section */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <Card variant="glass" className="card-3d text-center">
-            <h2 className="font-heading text-3xl font-bold sm:text-4xl">Ready to Explore Gemstones?</h2>
-            <p className="mx-auto mt-4 max-w-xl text-text-secondary">
-              Join thousands of gemologists and enthusiasts using GemSage to unlock the world of precious stones.
-            </p>
-            <Link href="/auth/signup" className="group mt-8 inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
-              Get Started Now
-              <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </Card>
-        </section>
+        <AnimatedSection>
+          <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <Card variant="glass" className="card-3d text-center relative overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="animate-orb-slow absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gemstone-600/20 blur-3xl" />
+                <div className="animate-orb-medium absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-emerald-500/15 blur-3xl" />
+              </div>
+              <div className="relative z-10">
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="font-heading text-3xl font-bold sm:text-4xl"
+                >
+                  Ready to Explore Gemstones?
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="mx-auto mt-4 max-w-xl text-text-secondary"
+                >
+                  Join thousands of gemologists and enthusiasts using StoneWise to unlock the world of precious stones.
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Link href="/auth/signup" className="group mt-8 inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
+                    Get Started Now
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </motion.div>
+              </div>
+            </Card>
+          </section>
+        </AnimatedSection>
       </main>
       <Footer />
     </>

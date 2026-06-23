@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    default: "Authentication | GemSage",
-    template: "%s | GemSage",
+    default: "Authentication | StoneWise",
+    template: "%s | StoneWise",
   },
 };
 

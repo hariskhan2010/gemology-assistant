@@ -58,7 +58,7 @@ export default function AssistantLayout() {
             <button onClick={() => setSidebarOpen(true)} className="rounded p-1.5 text-text-muted hover:text-text-primary transition-colors">
               <Menu className="h-5 w-5" />
             </button>
-            <span className="font-heading text-base font-bold text-text-primary">GemSage</span>
+            <span className="font-heading text-base font-bold text-text-primary">StoneWise</span>
             <button onClick={() => setVoiceModeOpen(true)} className="rounded p-1.5 text-text-muted hover:text-text-primary transition-colors">
               <Headphones className="h-5 w-5" />
             </button>

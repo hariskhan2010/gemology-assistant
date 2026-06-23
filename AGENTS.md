@@ -1,4 +1,4 @@
-# GemSage - Gemology AI Assistant
+# StoneWise - Gemology AI Assistant
 
 ## Documentation
 

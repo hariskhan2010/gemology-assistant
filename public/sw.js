@@ -1,4 +1,4 @@
-const CACHE = "gemsage-v1";
+const CACHE = "stonewise-v1";
 const ASSETS = ["/", "/manifest.json", "/gem_logo.png"];
 
 self.addEventListener("install", (event) => {

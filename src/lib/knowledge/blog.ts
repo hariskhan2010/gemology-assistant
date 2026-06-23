@@ -12,7 +12,7 @@ export const blogArticles: BlogArticle[] = [
   {
     slug: "how-to-identify-gemstones-with-ai",
     title: "How to Identify Gemstones with AI",
-    description: "Learn how AI-powered gem identification works and how GemSage can help you identify gemstones instantly from photos and descriptions.",
+    description: "Learn how AI-powered gem identification works and how StoneWise can help you identify gemstones instantly from photos and descriptions.",
     category: "Identification",
     readTime: "5 min",
     published: "2026-05-20",
@@ -21,15 +21,15 @@ export const blogArticles: BlogArticle[] = [
 
 Traditional gem identification requires years of training, expensive equipment like refractometers and spectroscopes, and access to reference collections. AI gem identification changes this by letting anyone identify a gemstone from a photo or description in seconds.
 
-## How GemSage Identifies Gems
+## How StoneWise Identifies Gems
 
-GemSage combines two approaches for accurate identification:
+StoneWise combines two approaches for accurate identification:
 
 ### 1. Visual Analysis
-Upload a photo of your gemstone, and GemSage analyzes its color, clarity, and visual characteristics. The AI compares these against a database of known gemstone properties to suggest matches.
+Upload a photo of your gemstone, and StoneWise analyzes its color, clarity, and visual characteristics. The AI compares these against a database of known gemstone properties to suggest matches.
 
 ### 2. Property-Based Identification
-Describe your gem's physical properties — color, hardness, refractive index, specific gravity — and GemSage cross-references them against 25+ gemstone profiles to find the closest match.
+Describe your gem's physical properties — color, hardness, refractive index, specific gravity — and StoneWise cross-references them against 25+ gemstone profiles to find the closest match.
 
 ## Key Properties Used for Identification
 
@@ -55,7 +55,7 @@ Describe your gem's physical properties — color, hardness, refractive index, s
 3. **Multiple photos** — Capture different angles and lighting conditions
 4. **Include known properties** — If you know hardness or weight, include it
 
-Try it now with the [GemSage Assistant](/assistant) — upload a photo or describe your stone to get an instant identification.
+Try it now with the [StoneWise Assistant](/assistant) — upload a photo or describe your stone to get an instant identification.
   `,
   },
   {
