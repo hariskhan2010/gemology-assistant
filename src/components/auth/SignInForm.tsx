@@ -57,7 +57,6 @@ function SignInFormContent() {
       }
 
       router.push(redirect);
-      router.refresh();
     } catch {
       setError("An unexpected error occurred");
     } finally {

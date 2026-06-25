@@ -15,9 +15,9 @@ export function ChatArea() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [activeConversation?.messages.length, isLoading]);
+  }, [activeConversation?.messages?.length, isLoading]);
 
-  if (!activeConversation || activeConversation.messages.length === 0) {
+  if (!activeConversation || !activeConversation.messages || activeConversation.messages.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center px-4">
         <motion.div

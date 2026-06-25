@@ -42,14 +42,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       })
       .then((data) => {
         const convs = (data.conversations || []).map((c: any) => ({
-          id: c.id,
-          title: c.title,
+          id: c.id || "",
+          title: c.title || "Untitled",
           messages: (c.messages || []).map((m: any) => ({
-            id: `msg-${m.timestamp}-${Math.random().toString(36).slice(2)}`,
-            role: m.role,
-            content: m.content,
+            id: `msg-${m.timestamp || Date.now()}-${Math.random().toString(36).slice(2)}`,
+            role: m.role || "user",
+            content: m.content || "",
             image: m.image || undefined,
-            timestamp: new Date(m.timestamp),
+            timestamp: new Date(m.timestamp || Date.now()),
           })),
           createdAt: new Date(c.createdAt),
           updatedAt: new Date(c.updatedAt),
@@ -272,7 +272,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const retryLastMessage = useCallback(async () => {
     if (!activeConversation) return;
-    const msgs = activeConversation.messages;
+    const msgs = activeConversation.messages || [];
     const lastUser = [...msgs].reverse().find((m) => m.role === "user");
     if (!lastUser) return;
 

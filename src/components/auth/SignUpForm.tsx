@@ -67,7 +67,6 @@ function SignUpFormContent() {
       }
 
       router.push("/assistant");
-      router.refresh();
     } catch {
       setError("An unexpected error occurred");
     } finally {
