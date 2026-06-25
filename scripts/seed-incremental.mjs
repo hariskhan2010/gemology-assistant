@@ -3,6 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { createHash } from "crypto";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -168,7 +169,7 @@ function chunkMarkdown(text) {
   for (const section of merged) {
     const subChunks = chunkSection(section.title, section.content);
     for (const sub of subChunks) {
-      chunks.push({ content: sub, section: section.title });
+      chunks.push({ content: section.title + "\n" + sub, section: section.title });
     }
   }
 
@@ -179,9 +180,9 @@ async function main() {
   console.log("Ensuring chunks table...");
   await ensureChunksTable();
 
-  // Get existing sections already in DB
-  const existing = await pool.query("SELECT source, section FROM knowledge_chunks");
-  const existingSet = new Set(existing.rows.map(r => `${r.source}::${r.section}`));
+  // Get existing chunks with content hash
+  const existing = await pool.query("SELECT source, section, md5(content) as content_hash FROM knowledge_chunks");
+  const existingSet = new Set(existing.rows.map(r => `${r.source}::${r.section}::${r.content_hash}`));
 
   // Build chunk plan for all docs
   const allChunks = [];
@@ -190,7 +191,8 @@ async function main() {
     const markdown = readFileSync(filePath, "utf-8");
     const chunks = chunkMarkdown(markdown);
     for (const c of chunks) {
-      allChunks.push({ ...c, source: file, key: `${file}::${c.section}` });
+      const contentHash = createHash("md5").update(c.content).digest("hex");
+      allChunks.push({ ...c, source: file, key: `${file}::${c.section}::${contentHash}` });
     }
   }
 

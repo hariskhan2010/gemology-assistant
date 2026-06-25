@@ -160,7 +160,7 @@ function chunkMarkdown(text) {
   for (const section of merged) {
     const subChunks = chunkSection(section.title, section.content);
     for (const sub of subChunks) {
-      chunks.push({ content: sub, section: section.title });
+      chunks.push({ content: section.title + "\n" + sub, section: section.title });
     }
   }
 

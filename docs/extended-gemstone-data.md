@@ -521,6 +521,8 @@ This reference document catalogs physical and optical properties for 80+ gemston
 
 ## 1.5 Tourmaline Group (Extended)
 
+Key properties: RI 1.640–1.650 (omega), SG 3.00–3.10, Mohs 7–7.5.
+
 ### Elbaite — Rubellite (Pink to Red)
 
 - **Refractive Index:** 1.614–1.666
@@ -900,6 +902,8 @@ This reference document catalogs physical and optical properties for 80+ gemston
 
 ## 1.10 Zircon (Extended)
 
+Key properties: RI 1.925–1.985, SG 4.60–4.80, Mohs 7–7.5.
+
 ### High Zircon
 
 - **Refractive Index:** 1.925–1.985 (tetragonal)
@@ -944,6 +948,8 @@ This reference document catalogs physical and optical properties for 80+ gemston
 ---
 
 ## 1.11 Diamond & Simulants (Extended)
+
+Moissanite key properties: RI 2.648–2.691, SG 3.21–3.22, Mohs 9.25.
 
 ### Natural Diamond — Type Ia
 

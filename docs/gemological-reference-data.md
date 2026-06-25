@@ -687,6 +687,7 @@ Cross-reference with Sections 2, 3, and 9.
 
 ## 10.2 Specific Gravity — Hydrostatic Weighing
 
+The hydrostatic method measures SG by weighing a stone in air and suspended in water.
 1. Weigh the stone in air (**A**) to two decimal places
 2. Suspend the stone in **distilled water at room temperature** using a fine wire/thread
 3. Record the weight in water (**W**)
