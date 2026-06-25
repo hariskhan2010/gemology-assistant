@@ -780,6 +780,8 @@ Key properties: RI 1.640–1.650 (omega), SG 3.00–3.10, Mohs 7–7.5.
 
 ## 1.8 Chrysoberyl Group (Extended)
 
+Key properties: RI 1.741–1.760, SG 3.70–3.78, Mohs 8.5.
+
 ### Alexandrite
 
 - **Refractive Index:** 1.741–1.760

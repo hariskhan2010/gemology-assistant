@@ -184,7 +184,7 @@
 
 > **Principle:** A dichromatic filter transmitting ~570 nm (yellow-green) and ~620–700 nm (red). Functions as a rapid chromium (Cr³⁺) vs. iron (Fe²⁺/Fe³⁺) discriminator. **Must be used under incandescent (tungsten) light only — LED sources produce unreliable results.**
 
-## 2.1 Green Stones
+## 2.1 Green Stones — Chelsea Filter
 
 | Species | CCF Reaction | Chromophore | Diagnostic Strength | Notes |
 |---|---|---|---|---|
@@ -206,7 +206,7 @@
 | Alexandrite (in daylight) | Red | Cr³⁺ | High | Strong Cr absorption |
 | Uvarovite garnet | Red | Cr³⁺ | High | Cr-coloured |
 
-## 2.2 Red Stones
+## 2.2 Red Stones — Chelsea Filter
 
 | Species | CCF Reaction | Notes |
 |---|---|---|
@@ -217,7 +217,7 @@
 | Garnet-topped doublet | Dark red to inert | Follows garnet reaction |
 | Glass (paste, red) | Variable | No diagnostic value |
 
-## 2.3 Blue Stones
+## 2.3 Blue Stones — Chelsea Filter
 
 | Species | CCF Reaction | Chromophore | Diagnostic Strength |
 |---|---|---|---|
@@ -232,7 +232,7 @@
 | **Cobalt glass** | **Bright red** | **Co²⁺** | **Highest — diagnostic** |
 | **Synthetic Co-spinel (lapis colour)** | **Bright red** | **Co²⁺** | **Diagnostic** |
 
-## 2.4 Critical CCF Rules
+## 2.4 Critical Chelsea Filter Rules
 
 1. CCF **detects chromium, not origin** — natural and synthetic Cr-rich stones react identically
 2. **Vanadium (V³⁺)** -coloured stones (many Brazilian emeralds, tsavorite) give weak/inert reactions
