@@ -148,11 +148,6 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <motion.section style={{ opacity: heroOpacity }} className="relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-gemstone-600/10 via-transparent to-transparent" />
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="animate-orb-slow absolute -left-32 -top-32 h-96 w-96 rounded-full bg-gemstone-600/20 blur-3xl" />
-            <div className="animate-orb-medium absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
-          </div>
           <motion.div style={{ scale: heroScale }} className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:gap-12">
               {/* Left: Text Content */}
@@ -225,11 +220,7 @@ export default function Home() {
                       width={320}
                       height={320}
                       className="object-contain"
-                      style={{ filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
                     />
-                  </div>
-                  <div className="absolute -z-10 flex items-center justify-center">
-                    <div className="h-48 w-48 rounded-full bg-gemstone-400/30 blur-3xl animate-pulse-slow" />
                   </div>
                 </div>
               </motion.div>
@@ -325,11 +316,7 @@ export default function Home() {
         <AnimatedSection>
           <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
             <Card variant="glass" className="card-3d text-center relative overflow-hidden">
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="animate-orb-slow absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gemstone-600/20 blur-3xl" />
-                <div className="animate-orb-medium absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-emerald-500/15 blur-3xl" />
-              </div>
-              <div className="relative z-10">
+              <div className="relative">
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}

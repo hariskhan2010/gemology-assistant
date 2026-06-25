@@ -29,11 +29,7 @@ export default function GemOfTheDay() {
         transition={{ duration: 0.6, ease: easeOut as any }}
       >
         <Card variant="glass" className="card-3d relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="animate-orb-slow absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gemstone-600/20 blur-3xl" />
-            <div className="animate-orb-medium absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl" />
-          </div>
-          <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-gemstone-500/30 bg-gemstone-600/10 px-3 py-1 text-xs font-medium text-gemstone-400">
                 <Sparkles className="h-3.5 w-3.5" />
@@ -73,11 +69,10 @@ export default function GemOfTheDay() {
               </div>
             </div>
             <div className="flex flex-col items-center gap-4 lg:items-end">
-              <div className="relative flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 <div className="animate-gem-rotate preserve-3d">
                   <Gem className="h-24 w-24 text-gemstone-400/40" strokeWidth={1} />
                 </div>
-                <div className="absolute h-20 w-20 rounded-full bg-gemstone-400/15 blur-2xl animate-pulse-slow" />
               </div>
               <Link
                 href={`/gems/encyclopedia/${gem.slug}`}
