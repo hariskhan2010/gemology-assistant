@@ -203,7 +203,7 @@ export async function searchKnowledge(query: string, limit: number = 5): Promise
     ORDER BY raw DESC
     LIMIT ${limit}
   `;
-  const rows = await sql.unsafe(queryStr) as { content: string; section: string; similarity: number }[];
+  const rows = await sql.unsafe(queryStr) as unknown as { content: string; section: string; similarity: number }[];
   return rows;
 }
 
