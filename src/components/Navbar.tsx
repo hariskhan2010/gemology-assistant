@@ -28,7 +28,7 @@ export default function Navbar() {
           <div className="perspective-1000">
             <div className="animate-gem-rotate preserve-3d">
               <Image
-                src="/gem_logo.webp"
+                src="/gem_logo.png"
                 alt="StoneWise Logo"
                 width={36}
                 height={36}

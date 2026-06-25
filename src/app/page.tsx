@@ -155,89 +155,92 @@ export default function Home() {
             <div className="animate-orb-medium absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
           </div>
           <motion.div style={{ scale: heroScale }} className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-            <div className="text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, ease: easeOut as any }}
-              >
+            <div className="flex flex-col items-center gap-16 lg:flex-row lg:gap-12">
+              {/* Left: Text Content */}
+              <div className="flex-1 text-center lg:text-left">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={heroLoaded ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  className="mb-6 inline-flex items-center gap-2 rounded-full border border-gemstone-500/30 bg-gemstone-600/10 px-4 py-1.5 text-sm text-gemstone-400"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, ease: easeOut as any }}
                 >
-                  <Sparkles className="h-4 w-4" />
-                  <span>AI-Powered Gemology Assistant</span>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={heroLoaded ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="mb-6 inline-flex items-center gap-2 rounded-full border border-gemstone-500/30 bg-gemstone-600/10 px-4 py-1.5 text-sm text-gemstone-400"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    <span>AI-Powered Gemology Assistant</span>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.15, ease: easeOut as any }}
-                className="font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
-              >
-                Your AI-Powered{" "}
-                <span className="text-shimmer">
-                  Gemology Expert
-                </span>
-              </motion.h1>
+                <motion.h1
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.15, ease: easeOut as any }}
+                  className="font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+                >
+                  Your AI-Powered{" "}
+                  <span className="text-shimmer">
+                    Gemology Expert
+                  </span>
+                </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.25, ease: easeOut as any }}
-                className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary"
-              >
-                Identify gems, master faceting, and unlock the secrets of precious stones with an intelligent assistant built for gemologists, jewelers, and enthusiasts.
-              </motion.p>
+                <motion.p
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.25, ease: easeOut as any }}
+                  className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary lg:mx-0"
+                >
+                  Identify gems, master faceting, and unlock the secrets of precious stones with an intelligent assistant built for gemologists, jewelers, and enthusiasts.
+                </motion.p>
 
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.35, ease: easeOut as any }}
+                  className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start"
+                >
+                  <Link href="/auth/signin" className="group inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
+                    Go to Assistant
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                  <a href="#features" className="inline-flex h-12 items-center justify-center rounded-md border border-border bg-surface px-8 text-base font-medium text-text-primary transition-all hover:bg-surface-elevated hover:-translate-y-0.5 hover:border-gemstone-500/50">
+                    Explore Features
+                  </a>
+                </motion.div>
+              </div>
+
+              {/* Right: Rotating Gemstone */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={heroLoaded ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.35, ease: easeOut as any }}
-                className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={heroLoaded ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.8, delay: 0.45, ease: easeOut as any }}
+                className="flex-shrink-0"
               >
-                <Link href="/auth/signin" className="group inline-flex h-12 items-center justify-center rounded-md bg-gemstone-600 px-8 text-base font-medium text-white shadow-lg shadow-gemstone-600/30 transition-all hover:bg-gemstone-500 hover:shadow-gemstone-500/40 hover:-translate-y-0.5">
-                  Go to Assistant
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <a href="#features" className="inline-flex h-12 items-center justify-center rounded-md border border-border bg-surface px-8 text-base font-medium text-text-primary transition-all hover:bg-surface-elevated hover:-translate-y-0.5 hover:border-gemstone-500/50">
-                  Explore Features
-                </a>
+                <div className="relative flex items-center justify-center perspective-1000">
+                  <div className="animate-gem-rotate preserve-3d">
+                    <NextImage
+                      src="/gem_logo.png"
+                      alt="StoneWise Gemstone"
+                      width={320}
+                      height={320}
+                      className="object-contain"
+                      style={{ width: "auto", height: "auto", filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
+                    />
+                  </div>
+                  <div className="absolute -z-10 flex items-center justify-center">
+                    <div className="h-48 w-48 rounded-full bg-gemstone-400/30 blur-3xl animate-pulse-slow" />
+                  </div>
+                </div>
               </motion.div>
             </div>
-
-            {/* Rotating Gemstone */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={heroLoaded ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.8, delay: 0.45, ease: easeOut as any }}
-              className="mt-16 flex justify-center"
-            >
-              <div className="relative flex items-center justify-center perspective-1000">
-                <div className="animate-gem-rotate preserve-3d">
-                  <NextImage
-                    src="/gem_logo.webp"
-                    alt="StoneWise Gemstone"
-                    width={320}
-                    height={320}
-                    className="object-contain"
-                    style={{ width: "auto", height: "auto", filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
-                  />
-                </div>
-                <div className="absolute -z-10 flex items-center justify-center">
-                  <div className="h-48 w-48 rounded-full bg-gemstone-400/30 blur-3xl animate-pulse-slow" />
-                </div>
-              </div>
-            </motion.div>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={heroLoaded ? { opacity: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.7 }}
-              className="mt-12 flex justify-center"
+              className="mt-16 flex justify-center"
             >
               <motion.a
                 href="#features"

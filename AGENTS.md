@@ -18,20 +18,42 @@ The product plan has been separated into phased docs for easier execution:
 
 | Phase | Status |
 |-------|--------|
-| Phase 1 | ✅ Complete |
-| Phase 2 | ✅ Complete |
-| Phase 3 | ✅ Complete |
-| Phase 4 | ✅ Complete |
-| Phase 5 | ✅ Complete |
-| Phase 6 | ✅ Complete |
-| Phase 7 | ✅ Complete |
-| Phase 8 | ✅ Complete |
+| Phase 1 - Foundation & Visual System | ✅ Complete |
+| Phase 2 - Cinematic Auth Experience | ✅ Complete |
+| Phase 3 - Assistant Shell & Conversation UI | ✅ Complete |
+| Phase 4 - Core AI Text & Faceting Guidance | ✅ Complete |
+| Phase 5 - Image & Camera Gem Identification | ✅ Complete |
+| Phase 6 - Voice Mode | ✅ Complete |
+| Phase 7 - NeonDB User Storage & Sign-In | ✅ Complete |
+| Phase 8 - AI Accuracy Enhancement | ✅ Complete |
+| Phase 9 - Hardening & Final Polish | ✅ Complete |
 
-## Theme Updates
-- **Color scheme**: Changed from purple/blue to green/emerald tones
-- **3D effects**: Added rotating gem SVG, card hover transforms, depth shadows, and CSS 3D animations
-- **Updated components**: Navbar, AuthLayout, Cards, Buttons, Landing page, Feature cards
+## AI Accuracy Enhancement (Phase 8)
 
-## Current Direction
+| Step | Status |
+|------|--------|
+| 1. System prompt expand (70→357 lines) | ✅ Complete |
+| 2. Gemstone data inject (runtime lookup) | ✅ Complete |
+| 3. RAG system (pgvector + embeddings) | ⏳ 55/204 chunks seeded (quota exhausted — finish tomorrow) |
+| 4. Test suite (Q&A evaluation) | ✅ 43/43 pass (100%) |
+| 5. Fine-tune | ❌ Pending |
 
-Build the app in clear phases instead of treating the whole scope as one delivery. Start with the auth experience and assistant shell, then layer in AI, media, and database integrations in controlled steps.
+## Key Architecture
+
+- **AI**: Google Gemini 2.5 Flash (free tier) via `@google/generative-ai`
+- **Embeddings**: Gemini Embedding (`gemini-embedding-001`, 768d) via REST API
+- **Vector DB**: NeonDB + pgvector (HNSW indexes)
+- **Knowledge**: 357-line system prompt + 25 gemstone DB + 6 reference docs (RAG, hybrid vector+keyword search)
+- **Chat flow**: System prompt → Notes → Gemstone injection → RAG context → Gemini stream
+- **Evaluation**: 43-question Q&A suite, independent of LLM, scores on keyword coverage
+
+## Notes
+
+- `seed-all.mjs` has a `DELETE` — do NOT run it, it clears all embeddings
+- Use `npm run seed` (runs `seed-incremental.mjs`) — only adds missing chunks, no delete
+- Use `npm run evaluate` to verify RAG quality
+- Run `seed` first, then `evaluate`, once Gemini daily quota resets
+
+## Theme
+- **Color scheme**: Green/emerald tones
+- **3D effects**: Rotating gem SVG, card hover transforms, depth shadows, CSS 3D animations

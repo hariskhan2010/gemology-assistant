@@ -1,0 +1,6 @@
+{
+  "model": "models/gemini-embedding-001",
+  "content": {
+    "parts": [{"text": "Ruby is a red gemstone with hardness 9 on Mohs scale"}]
+  }
+}

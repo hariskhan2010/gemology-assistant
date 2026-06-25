@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SYSTEM_PROMPT } from "@/lib/knowledge/system-prompt";
+import { gemstones } from "@/lib/knowledge/gemstones";
+import type { GemstoneData } from "@/lib/knowledge/gemstones";
+import { getKnowledgeContext } from "@/lib/knowledge/rag";
 import { neon } from "@neondatabase/serverless";
 import { randomUUID } from "crypto";
 
@@ -39,6 +42,72 @@ async function addNote(content: string) {
   } catch (e) {
     console.error("Failed to add note:", e);
   }
+}
+
+const GEMSTONE_KEYWORDS = [
+  ...gemstones.map(g => g.name.toLowerCase()),
+  ...gemstones.map(g => g.slug),
+  "diamond", "ruby", "sapphire", "emerald", "amethyst", "citrine", "garnet",
+  "topaz", "peridot", "opal", "tourmaline", "tanzanite", "spinel", "zircon",
+  "aquamarine", "moonstone", "jade", "jadeite", "nephrite", "lapis", "turquoise",
+  "alexandrite", "chrysoberyl", "amber", "coral", "pearl", "quartz", "beryl",
+  "corundum", "feldspar", "chrysoprase", "heliodor", "morganite", "kunzite",
+  "iolite", "sunstone", "labradorite", "benitoite", "demantoid", "tsavorite",
+  "spessartite", "rhodolite", "pyrope", "almandine", "grossular", "hessonite",
+  "indicolite", "rubellite", "unakite", "bloodstone", "carnelian", "kyanite",
+  "diopside", "enstatite", "scapolite", "sodalite", "howlite", "variscite",
+  "chrysocolla", "dioptase"
+];
+
+function getGemstoneMessage(msg: string): string {
+  const lower = msg.toLowerCase();
+
+  for (const gem of gemstones) {
+    if (lower.includes(gem.name.toLowerCase()) || lower.includes(gem.slug)) {
+      return formatGemRef(gem);
+    }
+  }
+
+  const colorMap: Record<string, string[]> = {
+    red: ["Ruby", "Red Spinel", "Garnet", "Rubellite", "Coral"],
+    blue: ["Sapphire", "Blue Spinel", "Tanzanite", "Iolite", "Aquamarine", "Topaz (blue)", "Zircon", "Benitoite", "Kyanite", "Lapis Lazuli"],
+    green: ["Emerald", "Peridot", "Tsavorite", "Demantoid", "Tourmaline", "Jadeite", "Nephrite", "Chrysoprase", "Diopside"],
+    yellow: ["Citrine", "Yellow Sapphire", "Heliodor", "Topaz", "Chrysoberyl", "Spessartite"],
+    purple: ["Amethyst", "Violet Sapphire", "Kunzite", "Tanzanite", "Spinel", "Fluorite"],
+    pink: ["Morganite", "Kunzite", "Pink Sapphire", "Tourmaline", "Rose Quartz", "Spinel"],
+    orange: ["Spessartite", "Hessonite", "Padparadscha", "Fire Opal", "Imperial Topaz"],
+    black: ["Black Spinel", "Diamond", "Hematite", "Obsidian", "Onyx", "Tourmaline (schorl)"],
+    white: ["Diamond", "Rock Crystal", "White Sapphire", "Moonstone", "Pearl", "Goshenite"],
+    color: ["Alexandrite", "Sapphire (colour-change)", "Garnet (colour-change)", "Diaspore"],
+  };
+
+  for (const [color, candidates] of Object.entries(colorMap)) {
+    if (lower.includes(color)) {
+      const matched = gemstones.filter(g =>
+        candidates.some(c => g.name.toLowerCase().includes(c.split(" ")[0].toLowerCase()))
+      );
+      if (matched.length > 0) {
+        const keyword = matched.find(m => lower.match(new RegExp(`\\b${m.name.toLowerCase()}\\b`)));
+        if (keyword) return formatGemRef(keyword);
+        return matched.slice(0, 3).map(formatGemRef).join("\n\n");
+      }
+    }
+  }
+
+  return "";
+}
+
+function formatGemRef(gem: GemstoneData): string {
+  return `REFERENCE: ${gem.name}
+- Color: ${gem.color}
+- Mohs Hardness: ${gem.mohs}
+- Refractive Index: ${gem.ri}
+- Specific Gravity: ${gem.sg}
+- Crystal System: ${gem.crystal}
+- Common Treatments: ${gem.treatments.join(", ")}
+- Key Origins: ${gem.origins.join(", ")}
+- Price Range: ${gem.priceRange}
+- Description: ${gem.description}`;
 }
 
 function detectNote(content: string): string | null {
@@ -112,6 +181,22 @@ export async function POST(request: Request) {
       fullPrompt += "\n\nUSER NOTES you must remember:\n";
       for (const note of notes) {
         fullPrompt += `- ${note}\n`;
+      }
+    }
+
+    // Inject relevant gemstone reference data
+    if (lastUserMessage?.content) {
+      const gemRef = getGemstoneMessage(lastUserMessage.content);
+      if (gemRef) {
+        fullPrompt += "\n\n## RELEVANT GEMSTONE REFERENCE DATA\n" + gemRef;
+      }
+    }
+
+    // Inject RAG knowledge context
+    if (lastUserMessage?.content) {
+      const ragContext = await getKnowledgeContext(lastUserMessage.content);
+      if (ragContext) {
+        fullPrompt += ragContext;
       }
     }
 
