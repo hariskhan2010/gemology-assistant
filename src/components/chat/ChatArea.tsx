@@ -84,7 +84,7 @@ export function ChatArea() {
     <div className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth">
       <div className="mx-auto max-w-3xl">
         <AnimatePresence initial={false}>
-          {activeConversation.messages.map((msg, idx) => (
+          {(activeConversation.messages || []).map((msg, idx) => (
             <motion.div
               key={msg.id}
               initial={{ opacity: 0, y: 20 }}
