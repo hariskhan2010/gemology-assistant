@@ -34,12 +34,11 @@ The product plan has been separated into phased docs for easier execution:
 |------|--------|
 | 1. System prompt expand (70→357 lines) | ✅ Complete |
 | 2. Gemstone data inject (runtime lookup) | ✅ Complete |
-| 3. RAG system (pgvector + embeddings) | ⏳ 55/204 chunks seeded (quota exhausted — finish tomorrow) |
-| 4. Test suite (Q&A evaluation) | ✅ 43/43 pass (100%) |
+| 3. RAG system (pgvector + embeddings) | ✅ 204/204 chunks seeded |
+| 4. Test suite (Q&A evaluation) | ✅ 69/69 pass (100%) — expanded with care, advanced treatment, synthetic ID, geographic origin questions |
 | 5. Fine-tune | ❌ Pending |
 
 ## Key Architecture
-
 - **AI**: Google Gemini 2.5 Flash (free tier) via `@google/generative-ai`
 - **Embeddings**: Gemini Embedding (`gemini-embedding-001`, 768d) via REST API
 - **Vector DB**: NeonDB + pgvector (HNSW indexes)

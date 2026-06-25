@@ -82,6 +82,41 @@ const questions = [
   { q: "specific gravity hydrostatic weighing procedure", expect: ["specific", "gravity", "hydrostatic"] },
   { q: "how to use dichroscope for pleochroism", expect: ["dichroscope", "dichroic", "colour"] },
   { q: "using methylene iodide for specific gravity", expect: ["methylene", "iodide", "3.32"] },
+  // === 11. Gemstone Care & Durability ===
+  { q: "gemstones that should never be cleaned with ultrasonic cleaner", expect: ["ultrasonic", "emerald", "tanzanite", "turquoise", "opal", "pearl", "topaz", "peridot", "moonstone"] },
+  { q: "which gemstones are at risk of thermal shock", expect: ["thermal", "shock", "peridot", "zircon"] },
+  { q: "cleaning restrictions for glass filled ruby", expect: ["glass", "filled", "ruby", "no", "ultrasonic", "damp", "cloth"] },
+  { q: "care requirements for diffusion treated sapphire", expect: ["diffusion", "treated", "sapphire", "recutting", "polishing"] },
+  { q: "how to care for mystic topaz", expect: ["mystic", "topaz", "coated", "no", "ultrasonic", "steam", "abrasives"] },
+  { q: "cleaning restrictions for polymer impregnated jadeite b jade", expect: ["polymer", "jadeite", "b", "jade", "ultrasonic", "heat", "solvents"] },
+
+  // === 12. Advanced Treatment Detection ===
+  { q: "what is the flash effect in glass filled ruby", expect: ["flash", "effect", "glass", "filled", "ruby", "pathognomonic"] },
+  { q: "definitive detection method for beryllium diffused sapphire", expect: ["beryllium", "diffusion", "sapphire", "la", "icp", "ms"] },
+  { q: "how to detect sugar acid treated opal", expect: ["sugar", "acid", "opal", "lizard", "skin", "amorphous", "carbon"] },
+  { q: "diamondview detection of hpht treated diamond", expect: ["hpht", "diamond", "diamondview", "geometric", "growth", "patterns"] },
+  { q: "spectroscopic detection of irradiated diamond", expect: ["irradiated", "diamond", "gr1", "741", "nm"] },
+
+  // === 13. Synthetic & Laboratory-Grown Identification ===
+  { q: "most diagnostic feature of flame fusion synthetic ruby", expect: ["flame", "fusion", "curved", "striae", "ruby"] },
+  { q: "diagnostic inclusions in czochralski grown corundum", expect: ["czochralski", "metallic", "inclusions", "iridium", "platinum"] },
+  { q: "ftir detection of flux grown synthetic emerald", expect: ["flux", "emerald", "ftir", "water", "flat"] },
+  { q: "chevron graining in hydrothermal emerald", expect: ["chevron", "graining", "hydrothermal", "emerald", "diagnostic"] },
+  { q: "siv center detection in cvd diamond", expect: ["cvd", "diamond", "siv", "737", "nm"] },
+  { q: "ftir difference between natural and czochralski alexandrite", expect: ["czochralski", "alexandrite", "ftir", "flat", "hydrogen"] },
+
+  // === 14. Advanced Reference Data ===
+  { q: "chelsea filter test for synthetic cobalt blue spinel", expect: ["cobalt", "blue", "spinel", "synthetic", "bright", "red"] },
+  { q: "anomalous double refraction in synthetic spinel", expect: ["anomalous", "double", "refraction", "spinel", "tabby", "extinction"] },
+  { q: "key test to identify moissanite versus diamond", expect: ["moissanite", "facet", "doubling", "diamond"] },
+
+  // === 15. Geographic Origin & Notable Properties ===
+  { q: "where does tanzanite come from geographically", expect: ["tanzanite", "tanzania", "merelani", "hills", "only", "source"] },
+  { q: "what is kashmir sapphire known for", expect: ["kashmir", "sapphire", "cornflower", "blue", "velvety"] },
+  { q: "where is benitoite found", expect: ["benitoite", "san", "benito", "california", "only", "commercial"] },
+  { q: "what is the toughest natural gem material", expect: ["nephrite", "toughest", "natural", "gem"] },
+  { q: "pleochroism of iolite", expect: ["iolite", "trichroic", "strong", "pleochroism"] },
+  { q: "how to detect oil treatment in emerald using uv", expect: ["emerald", "oil", "resin", "fluorescence", "yellow", "green"] },
 ];
 
 async function main() {

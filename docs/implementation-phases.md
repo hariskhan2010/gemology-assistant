@@ -24,9 +24,8 @@ StoneWise is an AI-powered gemology assistant that helps users identify gems, le
 |------|-----------|--------|
 | 1 | System prompt expand (70→357 lines with full gemological reference) | ✅ Complete |
 | 2 | Gemstone data inject (runtime lookup + injection in chat route) | ✅ Complete |
-| 3 | RAG system (pgvector, Gemini embeddings, knowledge chunks table, seed/chat integration) | ✅ Complete (39 chunks seeded, 768d HNSW index) |
-| 4 | Test suite | ❌ Pending |
-| 5 | Fine-tune | ❌ Pending |
+| 3 | RAG system (pgvector, Gemini embeddings, knowledge chunks table, seed/chat integration) | ✅ Complete (204 chunks seeded, 768d HNSW index) |
+| 4 | Test suite | ✅ 69/69 pass (100%) |
 
 ## Key Files
 
