@@ -223,6 +223,6 @@ export async function clearKnowledge() {
 
 export async function getStats() {
   await ensureChunksTable();
-  const rows = await sql.unsafe("SELECT COUNT(*) as count FROM knowledge_chunks") as { count: number }[];
+  const rows = await sql.unsafe("SELECT COUNT(*) as count FROM knowledge_chunks") as unknown as { count: number }[];
   return { chunks: rows[0]?.count || 0 };
 }
