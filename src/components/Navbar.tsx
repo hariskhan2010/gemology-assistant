@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function Navbar() {
@@ -26,14 +25,13 @@ export default function Navbar() {
       <nav className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <Link href="/" className="group flex items-center gap-2 text-xl font-bold font-heading shrink-0" aria-label="StoneWise Home">
           <div className="perspective-1000">
-            <div className="animate-gem-rotate preserve-3d">
-              <Image
+            <div className="animate-gem-rotate preserve-3d" style={{ backfaceVisibility: "visible" }}>
+              <img
                 src="/gem_logo.png"
                 alt="StoneWise Logo"
                 width={36}
                 height={36}
                 className="object-contain logo-glow"
-                style={{ width: "auto", height: "auto" }}
               />
             </div>
           </div>

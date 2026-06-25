@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import NextImage from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { easeOut } from "@/lib/utils";
@@ -219,14 +218,14 @@ export default function Home() {
                 className="flex-shrink-0"
               >
                 <div className="relative flex items-center justify-center perspective-1000">
-                  <div className="animate-gem-rotate preserve-3d">
-                    <NextImage
+                  <div className="animate-gem-rotate preserve-3d" style={{ backfaceVisibility: "visible" }}>
+                    <img
                       src="/gem_logo.png"
                       alt="StoneWise Gemstone"
                       width={320}
                       height={320}
                       className="object-contain"
-                      style={{ width: "auto", height: "auto", filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
+                      style={{ filter: "drop-shadow(0 0 40px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.3))" }}
                     />
                   </div>
                   <div className="absolute -z-10 flex items-center justify-center">
