@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { cn, easeOut } from "@/lib/utils";
 import { X, Volume2, Square } from "lucide-react";
 import { useTextToSpeech } from "@/hooks/use-text-to-speech";
+import { MermaidBlock } from "./MermaidBlock";
 
 interface MessageBubbleProps {
   role: "user" | "assistant" | "system";
@@ -22,6 +23,7 @@ export function MessageBubble({ role, content, image, timestamp, onRetry }: Mess
     const lines = text.split("\n");
     const elements: React.ReactNode[] = [];
     let inCodeBlock = false;
+    let isMermaid = false;
     let codeContent = "";
     let codeKey = 0;
     let listItems: string[] = [];
@@ -44,16 +46,22 @@ export function MessageBubble({ role, content, image, timestamp, onRetry }: Mess
       if (line.startsWith("```")) {
         if (inCodeBlock) {
           flushList();
-          elements.push(
-            <pre key={`code-${codeKey++}`} className="my-3 rounded-lg bg-surface-elevated p-4 overflow-x-auto border border-border/50">
-              <code className="text-sm font-mono text-text-secondary leading-relaxed">{codeContent}</code>
-            </pre>
-          );
+          if (isMermaid) {
+            elements.push(<MermaidBlock key={`mermaid-${codeKey++}`} code={codeContent} />);
+          } else {
+            elements.push(
+              <pre key={`code-${codeKey++}`} className="my-3 rounded-lg bg-surface-elevated p-4 overflow-x-auto border border-border/50">
+                <code className="text-sm font-mono text-text-secondary leading-relaxed">{codeContent}</code>
+              </pre>
+            );
+          }
           codeContent = "";
           inCodeBlock = false;
+          isMermaid = false;
         } else {
           flushList();
           inCodeBlock = true;
+          isMermaid = line.trim() === "```mermaid";
         }
         continue;
       }

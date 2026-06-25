@@ -14,8 +14,8 @@ const MAX_CHUNK_WORDS = 400;
 const CHUNK_OVERLAP = 50;
 
 async function ensureChunksTable() {
-  await ddl.unsafe("CREATE EXTENSION IF NOT EXISTS vector");
-  await ddl.unsafe(`
+  await ddl`${ddl.unsafe("CREATE EXTENSION IF NOT EXISTS vector")}`;
+  await ddl`${ddl.unsafe(`
     CREATE TABLE IF NOT EXISTS knowledge_chunks (
       id SERIAL PRIMARY KEY,
       content TEXT NOT NULL,
@@ -24,13 +24,13 @@ async function ensureChunksTable() {
       embedding vector(768),
       created_at TIMESTAMP DEFAULT NOW()
     )
-  `);
-  await ddl.unsafe("CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_embedding ON knowledge_chunks USING hnsw (embedding vector_cosine_ops)");
-  await ddl.unsafe(`
+  `)}`;
+  await ddl`${ddl.unsafe("CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_embedding ON knowledge_chunks USING hnsw (embedding vector_cosine_ops)")}`;
+  await ddl`${ddl.unsafe(`
     ALTER TABLE knowledge_chunks ADD COLUMN IF NOT EXISTS fts tsvector
     GENERATED ALWAYS AS (to_tsvector('english', content)) STORED
-  `);
-  await ddl.unsafe("CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_fts ON knowledge_chunks USING gin (fts)");
+  `)}`;
+  await ddl`${ddl.unsafe("CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_fts ON knowledge_chunks USING gin (fts)")}`;
 }
 
 async function embedText(text: string): Promise<number[]> {
@@ -174,7 +174,7 @@ export async function seedKnowledge(source: string, markdown: string) {
     const escSource = source.replace(/'/g, "''");
     const escSection = chunk.section.replace(/'/g, "''");
     const query = `INSERT INTO knowledge_chunks (content, source, section, embedding) VALUES ('${escContent}', '${escSource}', '${escSection}', '${vecStr}'::vector)`;
-    await sql.unsafe(query);
+    await sql`${sql.unsafe(query)}`;
     successCount++;
     console.log(`  Embedded chunk ${successCount}/${chunks.length}: ${chunk.section}`);
   }
@@ -187,9 +187,11 @@ export async function searchKnowledge(query: string, limit: number = 5): Promise
   const vecStr = `[${embedding.join(",")}]`;
   // Build OR tsquery: any word match contributes to the boost
   const words = query.split(/\s+/).filter(Boolean);
-  const orQuery = words
-    .map((w: string) => `to_tsquery('english', '${w.replace(/'/g, "''")}')`)
-    .join(" || ");
+  const orQuery = words.length > 0
+    ? words
+        .map((w: string) => `to_tsquery('english', '${w.replace(/'/g, "''")}')`)
+        .join(" || ")
+    : "to_tsquery('english', '')";
   const queryStr = `
     WITH scored AS (
       SELECT content, section,
@@ -203,7 +205,7 @@ export async function searchKnowledge(query: string, limit: number = 5): Promise
     ORDER BY raw DESC
     LIMIT ${limit}
   `;
-  const rows = await sql.unsafe(queryStr) as unknown as { content: string; section: string; similarity: number }[];
+  const rows = await sql`${sql.unsafe(queryStr)}` as unknown as { content: string; section: string; similarity: number }[];
   return rows;
 }
 
@@ -218,11 +220,11 @@ export async function getKnowledgeContext(query: string): Promise<string> {
 
 export async function clearKnowledge() {
   await ensureChunksTable();
-  await sql.unsafe("DELETE FROM knowledge_chunks");
+  await sql`${sql.unsafe("DELETE FROM knowledge_chunks")}`;
 }
 
 export async function getStats() {
   await ensureChunksTable();
-  const rows = await sql.unsafe("SELECT COUNT(*) as count FROM knowledge_chunks") as unknown as { count: number }[];
+  const rows = await sql`${sql.unsafe("SELECT COUNT(*) as count FROM knowledge_chunks")}` as unknown as { count: number }[];
   return { chunks: rows[0]?.count || 0 };
 }
