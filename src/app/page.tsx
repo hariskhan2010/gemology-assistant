@@ -304,7 +304,7 @@ export default function Home() {
                   <motion.div key={feature.title} variants={itemVariants}>
                     <Link href={feature.href}>
                       <Card variant="glass" className="card-3d group cursor-pointer h-full">
-                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gemstone-600/20 text-gemstone-400 shadow-inner transition-all group-hover:bg-gemstone-600/30 group-hover:shadow-gemstone-500/10 group-hover:scale-110 group-hover:-translate-y-0.5">
+                        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-gemstone-600/20 text-gemstone-400">
                           <Icon className="h-6 w-6" />
                         </div>
                         <div className="flex items-center gap-2">

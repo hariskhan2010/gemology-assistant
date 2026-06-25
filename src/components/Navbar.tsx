@@ -51,7 +51,7 @@ export default function Navbar() {
               Blog
             </Link>
           </div>
-          <Link href="/assistant" className="text-sm px-4 py-2 rounded-md bg-gemstone-600 text-white shadow-md shadow-gemstone-600/20 hover:bg-gemstone-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-gemstone-500/30 transition-all">
+          <Link href="/assistant" className="text-sm px-4 py-2 rounded-md bg-gemstone-600 text-white hover:bg-gemstone-500 transition-all">
             Open Assistant
           </Link>
         </div>
