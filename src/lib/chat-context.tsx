@@ -158,11 +158,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date(),
     };
 
-    let targetId = activeId;
+    let targetId = activeId || "";
     let isNewConv = false;
 
     if (!targetId) {
-      targetId = `conv-${Date.now()}`;
       isNewConv = true;
     }
 
@@ -172,6 +171,23 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           ...getConvMessages(conversations, activeId),
           { role: userMsg.role, content: userMsg.content, image: userMsg.image },
         ];
+
+    // For new conversations, create in DB first so FK constraint passes for messages
+    if (isNewConv) {
+      try {
+        const res = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: image ? "Image analysis" : content.slice(0, 40) + (content.length > 40 ? "..." : ""),
+          }),
+        });
+        const data = await res.json();
+        targetId = data.conversation.id;
+      } catch {
+        targetId = `conv-${Date.now()}`;
+      }
+    }
 
     if (isNewConv) {
       const newConv: Conversation = {
@@ -197,13 +213,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       await doStream(targetId, assistantId, apiMessages);
 
       if (isNewConv) {
-        const title = image ? "Image analysis" : content.slice(0, 40) + (content.length > 40 ? "..." : "");
-        fetch("/api/conversations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, messages: apiMessages }),
-        }).catch(() => {});
-
         fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

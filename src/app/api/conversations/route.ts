@@ -183,14 +183,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, messages } = await request.json();
-    const id = randomUUID();
+    const { id, title, messages } = await request.json();
     const now = new Date().toISOString();
+    let convId = id;
 
     await ensureTable();
+
+    // If id provided and conversation exists, just append messages
+    if (convId) {
+      const existing = await sql`
+        SELECT id FROM conversations WHERE id = ${convId} AND user_id = ${session.userId} LIMIT 1
+      `;
+      if (existing.length > 0) {
+        if (messages && Array.isArray(messages)) {
+          for (const msg of messages) {
+            const msgId = randomUUID();
+            await sql`
+              INSERT INTO messages (id, conversation_id, role, content, image, timestamp)
+              VALUES (${msgId}, ${convId}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${msg.timestamp || now})
+            `;
+          }
+          await sql`
+            UPDATE conversations SET updated_at = ${now} WHERE id = ${convId}
+          `;
+        }
+        return NextResponse.json({ conversation: { id: convId } });
+      }
+    }
+
+    // Create new conversation
+    convId = convId || randomUUID();
     await sql`
       INSERT INTO conversations (id, user_id, title, created_at, updated_at)
-      VALUES (${id}, ${session.userId}, ${title || "New Chat"}, ${now}, ${now})
+      VALUES (${convId}, ${session.userId}, ${title || "New Chat"}, ${now}, ${now})
     `;
 
     if (messages && Array.isArray(messages)) {
@@ -198,14 +223,14 @@ export async function POST(request: Request) {
         const msgId = randomUUID();
         await sql`
           INSERT INTO messages (id, conversation_id, role, content, image, timestamp)
-          VALUES (${msgId}, ${id}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${msg.timestamp || now})
+          VALUES (${msgId}, ${convId}, ${msg.role}, ${msg.content}, ${msg.image || null}, ${msg.timestamp || now})
         `;
       }
     }
 
     return NextResponse.json({
       conversation: {
-        id,
+        id: convId,
         title: title || "New Chat",
         createdAt: now,
         updatedAt: now,

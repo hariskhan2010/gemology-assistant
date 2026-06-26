@@ -152,15 +152,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Save user message to DB
-    if (conversationId && lastUserMessage) {
-      await appendMessage(conversationId, {
-        role: lastUserMessage.role,
-        content: lastUserMessage.content,
-        image: lastUserMessage.image,
-      });
-    }
-
     // Build system prompt with notes
     const notes = await getNotes();
     let fullPrompt = SYSTEM_PROMPT;
@@ -187,8 +178,17 @@ export async function POST(request: Request) {
       }
     }
 
-    // Get history
+    // Get history (before saving current message to avoid duplicates)
     const history = conversationId ? await getRecentMessages(conversationId, 20) : [];
+
+    // Save user message to DB (after history fetch so it doesn't appear twice)
+    if (conversationId && lastUserMessage) {
+      await appendMessage(conversationId, {
+        role: lastUserMessage.role,
+        content: lastUserMessage.content,
+        image: lastUserMessage.image,
+      });
+    }
 
     // Build contents array
     const contents: any[] = [];
