@@ -36,7 +36,7 @@ The product plan has been separated into phased docs for easier execution:
 | 2. Gemstone data inject (runtime lookup) | ✅ Complete |
 | 3. RAG system (pgvector + embeddings) | ✅ 204/204 chunks seeded |
 | 4. Test suite (Q&A evaluation) | ✅ 69/69 pass (100%) — expanded with care, advanced treatment, synthetic ID, geographic origin questions |
-| 5. Fine-tune | ❌ Pending |
+| 5. Fine-tune | ❌ Skipped — RAG eval at 100%, free-tier Gemini doesn't support tuning, not cost-effective |
 
 ## Key Architecture
 - **AI**: Google Gemini 2.5 Flash (free tier) via `@google/generative-ai`
@@ -44,7 +44,7 @@ The product plan has been separated into phased docs for easier execution:
 - **Vector DB**: NeonDB + pgvector (HNSW indexes)
 - **Knowledge**: 357-line system prompt + 25 gemstone DB + 6 reference docs (RAG, hybrid vector+keyword search)
 - **Chat flow**: System prompt → Notes → Gemstone injection → RAG context → Gemini stream
-- **Evaluation**: 43-question Q&A suite, independent of LLM, scores on keyword coverage
+- **Evaluation**: 69-question Q&A suite + 18 e2e agent tests, independent of LLM, scores on keyword coverage
 
 ## Notes
 
