@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SYSTEM_PROMPT } from "@/lib/knowledge/system-prompt";
-import { gemstones } from "@/lib/knowledge/gemstones";
-import type { GemstoneData } from "@/lib/knowledge/gemstones";
+import { getGemKnowledge, formatGemKnowledge } from "@/lib/knowledge/gems/index";
 import { getKnowledgeContext } from "@/lib/knowledge/rag";
 import { neon } from "@neondatabase/serverless";
 import { randomUUID } from "crypto";
@@ -44,9 +43,7 @@ async function addNote(content: string) {
   }
 }
 
-const GEMSTONE_KEYWORDS = [
-  ...gemstones.map(g => g.name.toLowerCase()),
-  ...gemstones.map(g => g.slug),
+const GEM_KEYWORDS = [
   "diamond", "ruby", "sapphire", "emerald", "amethyst", "citrine", "garnet",
   "topaz", "peridot", "opal", "tourmaline", "tanzanite", "spinel", "zircon",
   "aquamarine", "moonstone", "jade", "jadeite", "nephrite", "lapis", "turquoise",
@@ -59,55 +56,45 @@ const GEMSTONE_KEYWORDS = [
   "chrysocolla", "dioptase"
 ];
 
+const COLOR_MAP: Record<string, string[]> = {
+  red: ["ruby", "spinel", "pyrope", "coral", "tourmaline"],
+  blue: ["sapphire", "spinel", "tanzanite", "iolite", "aquamarine", "topaz", "zircon", "benitoite", "lapis"],
+  green: ["emerald", "peridot", "tsavorite", "demantoid", "tourmaline", "jadeite", "nephrite"],
+  yellow: ["citrine", "sapphire", "topaz", "chrysoberyl", "spessartite"],
+  purple: ["amethyst", "sapphire", "kunzite", "tanzanite", "spinel"],
+  pink: ["tourmaline", "kunzite", "sapphire", "spinel"],
+  orange: ["spessartite", "sapphire", "topaz", "opal"],
+  black: ["spinel", "diamond", "tourmaline"],
+  white: ["diamond", "moonstone", "pearl", "opal"],
+  colour: ["alexandrite", "sapphire", "spinel", "garnet"],
+  color: ["alexandrite", "sapphire", "spinel", "garnet"],
+};
+
 function getGemstoneMessage(msg: string): string {
   const lower = msg.toLowerCase();
 
-  for (const gem of gemstones) {
-    if (lower.includes(gem.name.toLowerCase()) || lower.includes(gem.slug)) {
-      return formatGemRef(gem);
+  // Try direct name/slug match against knowledge base
+  for (const kw of GEM_KEYWORDS) {
+    if (lower.includes(kw)) {
+      const gem = getGemKnowledge(kw);
+      if (gem) return formatGemKnowledge(gem);
     }
   }
 
-  const colorMap: Record<string, string[]> = {
-    red: ["Ruby", "Red Spinel", "Garnet", "Rubellite", "Coral"],
-    blue: ["Sapphire", "Blue Spinel", "Tanzanite", "Iolite", "Aquamarine", "Topaz (blue)", "Zircon", "Benitoite", "Kyanite", "Lapis Lazuli"],
-    green: ["Emerald", "Peridot", "Tsavorite", "Demantoid", "Tourmaline", "Jadeite", "Nephrite", "Chrysoprase", "Diopside"],
-    yellow: ["Citrine", "Yellow Sapphire", "Heliodor", "Topaz", "Chrysoberyl", "Spessartite"],
-    purple: ["Amethyst", "Violet Sapphire", "Kunzite", "Tanzanite", "Spinel", "Fluorite"],
-    pink: ["Morganite", "Kunzite", "Pink Sapphire", "Tourmaline", "Rose Quartz", "Spinel"],
-    orange: ["Spessartite", "Hessonite", "Padparadscha", "Fire Opal", "Imperial Topaz"],
-    black: ["Black Spinel", "Diamond", "Hematite", "Obsidian", "Onyx", "Tourmaline (schorl)"],
-    white: ["Diamond", "Rock Crystal", "White Sapphire", "Moonstone", "Pearl", "Goshenite"],
-    color: ["Alexandrite", "Sapphire (colour-change)", "Garnet (colour-change)", "Diaspore"],
-  };
-
-  for (const [color, candidates] of Object.entries(colorMap)) {
+  // Fallback: match by colour keyword
+  for (const [color, candidates] of Object.entries(COLOR_MAP)) {
     if (lower.includes(color)) {
-      const matched = gemstones.filter(g =>
-        candidates.some(c => g.name.toLowerCase().includes(c.split(" ")[0].toLowerCase()))
-      );
+      const matched = candidates
+        .map(c => getGemKnowledge(c))
+        .filter((g): g is NonNullable<typeof g> => g !== undefined)
+        .slice(0, 3);
       if (matched.length > 0) {
-        const keyword = matched.find(m => lower.match(new RegExp(`\\b${m.name.toLowerCase()}\\b`)));
-        if (keyword) return formatGemRef(keyword);
-        return matched.slice(0, 3).map(formatGemRef).join("\n\n");
+        return matched.map(g => formatGemKnowledge(g)).join("\n\n---\n");
       }
     }
   }
 
   return "";
-}
-
-function formatGemRef(gem: GemstoneData): string {
-  return `REFERENCE: ${gem.name}
-- Color: ${gem.color}
-- Mohs Hardness: ${gem.mohs}
-- Refractive Index: ${gem.ri}
-- Specific Gravity: ${gem.sg}
-- Crystal System: ${gem.crystal}
-- Common Treatments: ${gem.treatments.join(", ")}
-- Key Origins: ${gem.origins.join(", ")}
-- Price Range: ${gem.priceRange}
-- Description: ${gem.description}`;
 }
 
 function detectNote(content: string): string | null {

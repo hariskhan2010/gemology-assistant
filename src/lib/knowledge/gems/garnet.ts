@@ -1,0 +1,136 @@
+import type { GemKnowledge } from "./types"
+
+export const pyrope: GemKnowledge = {
+  name: "Pyrope Garnet",
+  group: "Garnet",
+  properties: {
+    ri: "1.73–1.76",
+    birefringence: "N/A (SR)",
+    sg: "3.62–3.87",
+    mohs: 7,
+    crystal: "Cubic (isometric)",
+    optical: "Isotropic (SR)",
+  },
+  chromophore: "Cr³⁺",
+  ccf: "Red",
+  uv: {
+    lwuv: "Inert",
+    swuv: "Inert",
+  },
+  spectroscope: "Cr lines, no Fe pattern",
+  inclusions: ["Crystals", "Silk"],
+  treatments: ["Heat", "Irradiation"],
+  origins: ["India", "Sri Lanka", "Tanzania", "USA (Arizona)"],
+  syntheticDetection: "Rare; flux-grown garnet possible",
+  simulants: "Ruby (DR, dichroic, higher RI), red spinel (SR, UV fluorescence)",
+  care: "Ultrasonic safe. Durable for most jewelry.",
+  description: "Red garnet. Pure Mg-Al garnet, often mixed with almandine as rhodolite.",
+}
+
+export const almandine: GemKnowledge = {
+  name: "Almandine Garnet",
+  group: "Garnet",
+  properties: {
+    ri: "1.77–1.83",
+    birefringence: "N/A (SR)",
+    sg: "3.93–4.30",
+    mohs: 7.5,
+    crystal: "Cubic (isometric)",
+    optical: "Isotropic (SR)",
+  },
+  chromophore: "Fe²⁺",
+  ccf: "Red (weak)",
+  uv: {
+    lwuv: "Inert",
+    swuv: "Inert",
+  },
+  spectroscope: "504, 520, 573, 423, 460nm Fe — diagnostic pattern",
+  inclusions: ["Crystals", "Silk", "Scratched facet edges (hardness 7.5 but brittle)"],
+  treatments: ["Heat"],
+  origins: ["India", "Sri Lanka", "Tanzania", "Madagascar"],
+  syntheticDetection: "Rare",
+  simulants: "Ruby (DR), spinel (SR, lower RI), glass (bubbles)",
+  care: "Ultrasonic safe. Durable.",
+  description: "Purple-red Fe-Al garnet. Most common garnet species.",
+}
+
+export const spessartite: GemKnowledge = {
+  name: "Spessartite Garnet",
+  group: "Garnet",
+  properties: {
+    ri: "1.79–1.815",
+    birefringence: "N/A (SR)",
+    sg: "4.12–4.20",
+    mohs: 7,
+    crystal: "Cubic (isometric)",
+    optical: "Isotropic (SR)",
+  },
+  chromophore: "Mn²⁺",
+  ccf: "Inert",
+  uv: {
+    lwuv: "Inert",
+    swuv: "Inert",
+  },
+  spectroscope: "408, 421, 430, 460, 480, 520nm Mn lines",
+  inclusions: ["Fingerprints", "Crystals"],
+  treatments: ["Heat"],
+  origins: ["Tanzania", "Kenya", "Mali", "Sri Lanka"],
+  syntheticDetection: "Rare",
+  simulants: "Hessonite (grossular, lower RI), imperial topaz (DR, lower SG)",
+  care: "Ultrasonic safe.",
+  description: "Orange Mn-Al garnet. Fine orange colour highly sought.",
+}
+
+export const tsavorite: GemKnowledge = {
+  name: "Tsavorite Garnet",
+  group: "Garnet",
+  properties: {
+    ri: "1.73–1.76",
+    birefringence: "N/A (SR)",
+    sg: "3.59–3.65",
+    mohs: 7,
+    crystal: "Cubic (isometric)",
+    optical: "Isotropic (SR)",
+  },
+  chromophore: "V³⁺",
+  ccf: "Inert/weak green",
+  uv: {
+    lwuv: "Inert",
+    swuv: "Inert",
+  },
+  spectroscope: "No Cr lines",
+  inclusions: ["Fingerprints", "Crystals"],
+  treatments: ["Heat"],
+  origins: ["Tanzania", "Kenya"],
+  syntheticDetection: "Rare",
+  simulants: "Emerald (DR, three-phase inclusions, CCF red), chrome tourmaline (DR, pleochroic), diopside (DR, lower Mohs)",
+  care: "Ultrasonic safe. Durable for most jewelry.",
+  description: "V-green grossular garnet. Discovered 1967 in Tanzania. Vivid green without Cr lines.",
+}
+
+export const demantoid: GemKnowledge = {
+  name: "Demantoid Garnet",
+  group: "Garnet",
+  properties: {
+    ri: "1.88–1.895",
+    birefringence: "N/A (SR)",
+    sg: "3.82–3.88",
+    mohs: 6.5,
+    crystal: "Cubic (isometric)",
+    optical: "Isotropic (SR)",
+  },
+  chromophore: "Cr³⁺",
+  ccf: "Red",
+  uv: {
+    lwuv: "Inert",
+    swuv: "Inert",
+  },
+  spectroscope: "Cr lines",
+  inclusions: ["Horsetail asbestos inclusions — diagnostic", "Fingerprints"],
+  treatments: ["Heat", "Irradiation"],
+  origins: ["Russia (Ural)", "Madagascar", "Namibia", "Italy"],
+  syntheticDetection: "Rare; horsetail inclusions not replicated synthetically",
+  simulants: "Emerald (DR, lower RI), tsavorite (lower RI, no Cr), diopside (DR), peridot (DR, lily pad inclusions)",
+  care: "Avoid ultrasonic (Mohs 6.5, brittle). Warm soapy water.",
+  description: "Green andradite garnet. Dispersion 0.057 (higher than diamond). Horsetail inclusions diagnostic.",
+}
