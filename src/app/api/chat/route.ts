@@ -106,15 +106,14 @@ function detectNote(content: string): string | null {
   return null;
 }
 
-async function getRecentMessages(conversationId: string, limit: number) {
+async function getMessages(conversationId: string) {
   try {
     const rows = await sql`
       SELECT role, content FROM messages 
       WHERE conversation_id = ${conversationId} 
-      ORDER BY timestamp DESC 
-      LIMIT ${limit}
+      ORDER BY timestamp ASC
     ` as { role: string; content: string }[];
-    return rows.reverse();
+    return rows;
   } catch {
     return [];
   }
@@ -178,8 +177,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Get history (before saving current message to avoid duplicates)
-    const history = conversationId ? await getRecentMessages(conversationId, 20) : [];
+    // Get full message history (before saving current message to avoid duplicates)
+    const history = conversationId ? await getMessages(conversationId) : [];
 
     // Save user message to DB (after history fetch so it doesn't appear twice)
     if (conversationId && lastUserMessage) {
